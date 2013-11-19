@@ -38,10 +38,8 @@ public class CarteDeTelefon {
 			} else if (optiuneMeniu.equals("5")) {
 				afisareAbonati();
 			}
-			
-			
 		} while(optiuneMeniu.equals("6") ==  false);
-		input.close();
+	input.close();
 		
 	}
 	
