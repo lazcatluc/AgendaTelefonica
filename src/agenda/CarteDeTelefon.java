@@ -2,89 +2,146 @@ package agenda;
 
 import database.MySQL;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+
 public class CarteDeTelefon {
 	
 	private ArrayList<Abonat> abonat = new ArrayList<Abonat>();
 	private TipNumarTelefon nrTel = new TipNumarTelefon();
-	NrTel numar;
-	Scanner input = new Scanner(System.in);
-	String optiuneMeniu;
-	Connection conn;
-	Statement sent;
+	private Connection conn;
+	private Statement sent;
+	private JFrame frame; 
+	private JPanel panouIntroducere; 
+	private JScrollPane panouAfisare;
+	private JTable tabelDate;
+	
+	JLabel numeLabel = new JLabel("Nume");
+	JLabel prenumeLabel = new JLabel("Prenume");
+	JLabel cnpLabel = new JLabel("CNP");
+	JLabel telefonLabel = new JLabel("Telefon");
+	
+	JTextField numeText = new JTextField();
+	JTextField prenumeText = new JTextField();
+	JTextField cnpText = new JTextField();
+	JTextField telefonText = new JTextField();
+	
+	String[] capTabel = {"Nume","Prenume","CNP","Telefon"};
+	Object[][] data = {
+		    {"Kathy", "Smith",
+		     "Snowboarding", new Integer(5), new Boolean(false)},
+		    {"John", "Doe",
+		     "Rowing", new Integer(3), new Boolean(true)},
+		    {"Sue", "Black",
+		     "Knitting", new Integer(2), new Boolean(false)},
+		    {"Jane", "White",
+		     "Speed reading", new Integer(20), new Boolean(true)},
+		    {"John", "Doe",
+		     "Rowing", new Integer(3), new Boolean(true)},
+		    {"Sue", "Black",
+		     "Knitting", new Integer(2), new Boolean(false)},
+		    {"Jane", "White",
+		     "Speed reading", new Integer(20), new Boolean(true)},
+		    {"John", "Doe",
+		     "Rowing", new Integer(3), new Boolean(true)},
+		    {"Sue", "Black",
+		     "Knitting", new Integer(2), new Boolean(false)},
+		    {"Jane", "White",
+		     "Speed reading", new Integer(20), new Boolean(true)},
+		    {"Joe", "Brown",
+		     "Pool", new Integer(10), new Boolean(false)}
+		};
+
+	
+	public void afisare() {
+		 frame = new JFrame();
+		 panouIntroducere = new JPanel(new SpringLayout());
+		 tabelDate = new JTable(data,capTabel);
+		 panouAfisare = new JScrollPane(tabelDate);
+		 
+		 GridLayout layoutPrincipal = new GridLayout(2, 1);
+         GridLayout layoutIntroducere = new GridLayout(4, 2);
+         panouIntroducere.setLayout(layoutIntroducere);
+         panouIntroducere.setPreferredSize(new Dimension(600, 200));
+         panouIntroducere.setMinimumSize(new Dimension(600, 200));
+         panouIntroducere.setMaximumSize(new Dimension(600, 200));
+         
+         panouAfisare.setPreferredSize(new Dimension(600,200));
+         panouAfisare.setMinimumSize(new Dimension(600, 200));
+         panouAfisare.setMaximumSize(new Dimension(600, 200));
+         
+         panouIntroducere.add(numeLabel);
+         panouIntroducere.add(numeText);
+         
+         panouIntroducere.add(prenumeLabel);
+         panouIntroducere.add(prenumeText);
+         
+         panouIntroducere.add(cnpLabel);
+         panouIntroducere.add(cnpText);
+         
+         panouIntroducere.add(telefonLabel);
+         panouIntroducere.add(telefonText);
+         
+		 panouIntroducere.setVisible(true);
+		 
+		 
+		 tabelDate.setFillsViewportHeight(true);
+		 
+		 frame.setLayout(layoutPrincipal);
+		 frame.setSize(600, 400);
+		 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		 frame.setTitle("Agenda Telefonica");
+		 frame.add(panouIntroducere,BorderLayout.WEST);
+		 frame.add(panouAfisare,BorderLayout.SOUTH);
+		 frame.setVisible(true);		 
+	}
 	
 	public CarteDeTelefon() {
 		conn = MySQL.getConnection();
-		do {
-			System.out.println("1. Adaugare abonat");
-			System.out.println("2. Cauta abonat");
-			System.out.println("3. Sterge abonat");
-			System.out.println("4. Modifcare abonat");
-			System.out.println("5. Afisare abonati");
-			System.out.println("6. Iesire");
-			
-			optiuneMeniu = input.nextLine();
-			
-			if (optiuneMeniu.equals("1")) {
-				adaugareAbonat();
-			} else if (optiuneMeniu.equals("2")) {
-				cautareAbonat();
-			} else if (optiuneMeniu.equals("3")) {
-				stergeAbonat();
-			} else if (optiuneMeniu.equals("4")) {
-				modificaAbonat();
-			} else if (optiuneMeniu.equals("5")) {
-				afisareAbonati();
-			}
-		} while(optiuneMeniu.equals("6") ==  false);
-	input.close();
+		afisare();
+		
 		
 	}
 	
 	private void adaugareAbonat() {
-		Scanner inputAdaugare = new Scanner(System.in);
-		String optiuneAdaugare;
-		String nume;
-		String prenume;
-		String cnp;
-		String telefon;
-		
-		do {
-			System.out.println("Nume Prenume CNP Telefon");
-			optiuneAdaugare = inputAdaugare.nextLine();
-			String[] split = optiuneAdaugare.split(" ");
-			
-			nume=split[0];
-			prenume=split[1];
-			cnp=split[2];
-			telefon=split[3];
-			NrTel numar = nrTel.getTipNumarTel(telefon);
-			Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
-			abonat.add(abonatUnic);
-				
 
-			
-			
-		} while(optiuneAdaugare.equals("x") == false);
-		inputAdaugare.close();
+		String nume = numeText.getText();;
+		String prenume = prenumeText.getText();
+		String cnp = cnpText.getText();
+		String telefon = telefonText.getText();	
+		
+		NrTel numar = nrTel.getTipNumarTel(telefon);
+		Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
+		abonat.add(abonatUnic);
 		
 		Iterator<Abonat> inregistareAbonat = abonat.iterator();
 		
 		while(inregistareAbonat.hasNext()) {
-			Abonat abonat = inregistareAbonat.next();
+			Abonat abonatIterat = inregistareAbonat.next();
 			try {
 				String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
 						+ "VALUES(?,?,?,?)";
 				
 				PreparedStatement ps = conn.prepareStatement(adaugaQuery);
-				ps.setString(1, abonat.getNume());
-				ps.setString(2, abonat.getPrenume());
-				ps.setString(3, abonat.getCnp());
-				ps.setString(4, abonat.getNumarTelefon().toString());
+				ps.setString(1, abonatIterat.getNume());
+				ps.setString(2, abonatIterat.getPrenume());
+				ps.setString(3, abonatIterat.getCnp());
+				ps.setString(4, abonatIterat.getNumarTelefon().toString());
 				
 				int n = ps.executeUpdate();
 				if(n>0) {
