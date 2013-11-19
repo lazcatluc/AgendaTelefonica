@@ -58,14 +58,16 @@ public class CarteDeTelefon {
 			System.out.println("Nume Prenume CNP Telefon");
 			optiuneAdaugare = inputAdaugare.nextLine();
 			String[] split = optiuneAdaugare.split(" ");
-			for(String element:split) {
-				nume=split[0];
-				prenume=split[1];
-				cnp=split[2];
-				telefon=split[3];
-				Abonat abonatUnic = new Abonat(nume, prenume, cnp, new NrMobil(telefon));  
-				abonat.add(abonatUnic);
-			}
+			
+			nume=split[0];
+			prenume=split[1];
+			cnp=split[2];
+			telefon=split[3];
+			
+			Abonat abonatUnic = new Abonat(nume, prenume, cnp, new NrMobil(telefon));  
+			abonat.add(abonatUnic);
+				
+
 			
 			
 		} while(optiuneAdaugare.equals("x") == false);
