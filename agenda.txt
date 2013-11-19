@@ -1,0 +1,4 @@
+[Abonat [nume=Ion, prenume=Popescu, cnp=1870608340437, numarTelefon=0744557785]
+, Abonat [nume=Dan, prenume=Ionescu, cnp=1780685427757, numarTelefon=0757556887]
+, Abonat [nume=Constantin, prenume=Georgescu, cnp=1680508698547, numarTelefon=0247412134]
+]
