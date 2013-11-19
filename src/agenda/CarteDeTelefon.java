@@ -10,6 +10,8 @@ import java.util.Scanner;
 public class CarteDeTelefon {
 	
 	private ArrayList<Abonat> abonat = new ArrayList<Abonat>();
+	private TipNumarTelefon nrTel = new TipNumarTelefon();
+	NrTel numar;
 	Scanner input = new Scanner(System.in);
 	String optiuneMeniu;
 	Connection conn;
@@ -43,7 +45,6 @@ public class CarteDeTelefon {
 		
 	}
 	
-	
 	private void adaugareAbonat() {
 		Scanner inputAdaugare = new Scanner(System.in);
 		String optiuneAdaugare;
@@ -61,8 +62,8 @@ public class CarteDeTelefon {
 			prenume=split[1];
 			cnp=split[2];
 			telefon=split[3];
-			
-			Abonat abonatUnic = new Abonat(nume, prenume, cnp, new NrMobil(telefon));  
+			NrTel numar = nrTel.getTipNumarTel(telefon);
+			Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
 			abonat.add(abonatUnic);
 				
 
