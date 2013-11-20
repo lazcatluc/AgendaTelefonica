@@ -35,8 +35,8 @@ public class CarteDeTelefon extends JFrame{
     private static final long serialVersionUID = 1L;
     
     private TipNumarTelefon nrTel = new TipNumarTelefon();
-    private Connection conn;
-    private Statement sent;
+    private static Connection conn;
+    private static Statement sent;
     private JScrollPane panouAfisare;
     private JTable tabelDate;
 
@@ -44,6 +44,8 @@ public class CarteDeTelefon extends JFrame{
     private JTextField prenumeText = new JTextField(10);
     private JTextField cnpText = new JTextField(10);
     private JTextField telefonText = new JTextField(10);
+
+	private DefaultTableModel model;
     
     public CarteDeTelefon() {
         conn = MySQL.getConnection();
@@ -169,6 +171,7 @@ public class CarteDeTelefon extends JFrame{
 	return panouInterfataAdaugare;
     }
     
+    
     private JPanel interfataButoanePrincipale() {
         JPanel panouButoanePrincipale = new JPanel(new GridBagLayout());
         JButton adaugaAbonat = new JButton("Adaugare");
@@ -186,8 +189,7 @@ public class CarteDeTelefon extends JFrame{
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            // TODO Auto-generated method stub
-            activareInput();
+            	activareInput();
             }
         });
         
@@ -195,8 +197,7 @@ public class CarteDeTelefon extends JFrame{
         
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        // TODO Auto-generated method stub
-			adaugareAbonat();
+	        	adaugareAbonat();
 	        }
 	    });
         
@@ -204,7 +205,6 @@ public class CarteDeTelefon extends JFrame{
         
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        // TODO Auto-generated method stub
 	            stergeAbonat();
 	        }
 	    });
@@ -213,7 +213,6 @@ public class CarteDeTelefon extends JFrame{
         
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        // TODO Auto-generated method stub
 	            modificaAbonat();
 	        }
 	    });
@@ -222,7 +221,6 @@ public class CarteDeTelefon extends JFrame{
         
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        // TODO Auto-generated method stub
 	            dezactivareInput();
 	        }
         });
@@ -267,21 +265,12 @@ public class CarteDeTelefon extends JFrame{
     }
     
     public JScrollPane tabelAbonati() {
-        Vector<String> numeColoane = new Vector<String>();
-        numeColoane.add("Nr. #");
-        numeColoane.add("Nume");
-        numeColoane.add("Prenume");
-        numeColoane.add("CNP");
-        numeColoane.add("Telefon");
-        numeColoane.add("\n");
-        Vector<Vector<Object>> data = afisareAbonati();
-        System.out.println(data);
         
-        
-        tabelDate = new JTable(data,numeColoane);
+        tabelDate = new JTable(afisareAbonati());
+        tabelDate.setFillsViewportHeight(true);
         panouAfisare = new JScrollPane(tabelDate);
         panouAfisare.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        tabelDate.setFillsViewportHeight(true);
+        
         panouAfisare.setPreferredSize(new Dimension(400,300));
         
         return panouAfisare;
@@ -309,7 +298,7 @@ public class CarteDeTelefon extends JFrame{
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        panouPrincipal.add(tabelAbonati(),gbc);
+        panouPrincipal.add(actualizareTabel(),gbc);
         
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridx = 0;
@@ -365,6 +354,7 @@ public class CarteDeTelefon extends JFrame{
                 
                 int n = ps.executeUpdate();
                 if(n>0) {
+                		actualizareTabel();
                         JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
                 }
             } catch(SQLException ex) {
@@ -376,39 +366,73 @@ public class CarteDeTelefon extends JFrame{
     }
         
     private void cautareAbonat() {
-        //TODO
     }
     
     private void stergeAbonat() {
-        //TODO
     }
     
     private void modificaAbonat() {
-        //TODO
     }
     
-    private Vector<Vector<Object>> afisareAbonati(){
+    public JScrollPane actualizareTabel() {
+    	try {
+    		
+    	String[] coloane = {"ID","Nume","Prenume","CNP","Telefon"};
+        String afiseazaQuery = "SELECT * FROM ABONAT";
+        
+        sent = conn.createStatement();
+        ResultSet rs = sent.executeQuery(afiseazaQuery);
+        
+        String[] abonat = new String[5];
+        while(rs.next()) {
+        	abonat[0] = rs.getString("id");
+        	abonat[1] = rs.getString("nume");
+        	abonat[2] = rs.getString("prenume");
+        	abonat[3] = rs.getString("cnp");
+        	abonat[4] = rs.getString("telefon");
+        	model.addRow(abonat);
+        }
+        model = new DefaultTableModel(null,coloane);
+        tabelDate.setModel(model);
+    	} catch(Exception e) {
+    		
+    	}
+    	panouAfisare = new JScrollPane(tabelDate);
+        panouAfisare.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        panouAfisare.setPreferredSize(new Dimension(400,300));
+        
+        return panouAfisare;
+    }
+    
+    private static DefaultTableModel afisareAbonati(){
+    	
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        Vector<Object> rand;
+        Vector<String> numeColoane = new Vector<String>();
+        DefaultTableModel tabelAbonati = new DefaultTableModel(data,numeColoane);
+        numeColoane.add("Nr. #");
+        numeColoane.add("Nume");
+        numeColoane.add("Prenume");
+        numeColoane.add("CNP");
+        numeColoane.add("Telefon");
+        
+        
         try {
             String afiseazaQuery = "SELECT * FROM ABONAT";
             sent = conn.createStatement();
             ResultSet rs = sent.executeQuery(afiseazaQuery);
-            rand = new Vector<>(5);
             while(rs.next()) {
-            	rand.add(rs.getString("id"));
-                rand.add(rs.getString("nume"));
-                rand.add(rs.getString("prenume"));
-                rand.add(rs.getString("cnp"));
-                rand.add(rs.getString("telefon"));
+            	Vector<Object> rand = new Vector<Object>(5);
+            	for(int indexColoana = 1; indexColoana <=5; indexColoana ++) {
+            		rand.add(rs.getObject(indexColoana));
+            	}
                 data.add(rand);
-                
             }
             
         } catch(Exception ex) {
             ex.printStackTrace();
         }
-        return data;
+        
+        return tabelAbonati;
     }
     
     public static void main(String[] args) {
