@@ -17,7 +17,7 @@ public class TipNumarTelefon {
 		} else if(numarTel.startsWith(identificareNumarFix)){
 			return new NrFix(numarTel);
 		} else {
-			throw new Exception("Formatul numarlui introdus este incorect!");
+			throw new Exception("Formatul numarului introdus este incorect!");
 		}
 	}
 }
