@@ -5,15 +5,16 @@ import database.MySQL;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
 
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +31,13 @@ public class CarteDeTelefon {
 	private JPanel panouIntroducere; 
 	private JScrollPane panouAfisare;
 	private JTable tabelDate;
+	private JPanel panouButoane;
+	private JButton adaugaAbonat;
+	private JButton salveazaAbonat;
+	private JButton stergeAbonat;
+	private JButton actualizeazaAbonat;
+	private JButton anuleazaInregistrare;
+	
 	
 	JLabel numeLabel = new JLabel("Nume");
 	JLabel prenumeLabel = new JLabel("Prenume");
@@ -67,47 +75,176 @@ public class CarteDeTelefon {
 		     "Pool", new Integer(10), new Boolean(false)}
 		};
 
+	private void btnAdaugaAbonatActionPerformed(ActionEvent ev) {
+		try {
+			String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
+					+ "VALUES(?,?,?,?)";
+			
+			PreparedStatement ps = conn.prepareStatement(adaugaQuery);
+			ps.setString(1, numeText.getText());
+			ps.setString(2, prenumeText.getText());
+			ps.setString(3, cnpText.getText());
+			ps.setString(4, telefonText.getText());
+			
+			int n = ps.executeUpdate();
+			if(n>0) {
+			    	JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
+			}
+		} catch(SQLException ex) {
+		    	JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+			
+		}
+	}
+	
+	private void activareInput() {
+		 numeText.setEnabled(true);
+		 prenumeText.setEnabled(true);
+		 cnpText.setEnabled(true);
+		 telefonText.setEnabled(true);
+	}
+	
+	private void dezactivareInput() {
+		 numeText.setEnabled(false);
+		 numeText.setText(null);
+		 
+		 prenumeText.setEnabled(false);
+		 prenumeText.setText(null);
+		 
+		 cnpText.setEnabled(false);
+		 cnpText.setText(null);
+		 
+		 telefonText.setEnabled(false);
+		 telefonText.setText(null);
+	}
 	
 	public void afisare() {
 		 frame = new JFrame();
-		 panouIntroducere = new JPanel(new SpringLayout());
+		 panouIntroducere = new JPanel();
+		 panouButoane = new JPanel();
 		 tabelDate = new JTable(data,capTabel);
 		 panouAfisare = new JScrollPane(tabelDate);
 		 
+		 dezactivareInput();
+		 
 		 GridLayout layoutPrincipal = new GridLayout(2, 1);
-         GridLayout layoutIntroducere = new GridLayout(4, 2);
-         panouIntroducere.setLayout(layoutIntroducere);
-         panouIntroducere.setPreferredSize(new Dimension(600, 200));
-         panouIntroducere.setMinimumSize(new Dimension(600, 200));
-         panouIntroducere.setMaximumSize(new Dimension(600, 200));
-         
-         panouAfisare.setPreferredSize(new Dimension(600,200));
-         panouAfisare.setMinimumSize(new Dimension(600, 200));
-         panouAfisare.setMaximumSize(new Dimension(600, 200));
-         
-         panouIntroducere.add(numeLabel);
-         panouIntroducere.add(numeText);
-         
-         panouIntroducere.add(prenumeLabel);
-         panouIntroducere.add(prenumeText);
-         
-         panouIntroducere.add(cnpLabel);
-         panouIntroducere.add(cnpText);
-         
-         panouIntroducere.add(telefonLabel);
-         panouIntroducere.add(telefonText);
-         
+                 GridLayout layoutIntroducere = new GridLayout(4, 2);
+                 GridLayout layoutButoane = new GridLayout(1, 5);
+                 
+                 adaugaAbonat = new JButton("Adaugare");
+                 adaugaAbonat.addActionListener(
+                	 new ActionListener() {
+			    
+			    @Override
+			    public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				activareInput();
+			    }
+			}
+                	 );
+                 
+                 salveazaAbonat = new JButton("Salvare");
+                 salveazaAbonat.addActionListener(new ActionListener() {
+		    
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			try {
+				String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
+						+ "VALUES(?,?,?,?)";
+				
+				PreparedStatement ps = conn.prepareStatement(adaugaQuery);
+				ps.setString(1, numeText.getText());
+				ps.setString(2, prenumeText.getText());
+				ps.setString(3, cnpText.getText());
+				ps.setString(4, telefonText.getText());
+				
+				int n = ps.executeUpdate();
+				if(n>0) {
+				    	JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
+				}
+			} catch(SQLException ex) {
+			    	JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+				
+			}
+		    }
+		});
+                 
+                 stergeAbonat = new JButton("Stergere");
+                 stergeAbonat.addActionListener(new ActionListener() {
+		    
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		    }
+		});
+                 
+                 actualizeazaAbonat = new JButton("Actualizare");
+                 actualizeazaAbonat.addActionListener(new ActionListener() {
+		    
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		    }
+		});
+                 
+                 anuleazaInregistrare = new JButton("Anulare");
+                 anuleazaInregistrare.addActionListener(new ActionListener() {
+		    
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+
+			dezactivareInput();
+		    }
+		});
+                 panouIntroducere.setLayout(layoutIntroducere);
+                 panouButoane.setLayout(layoutButoane);
+                 
+                 panouIntroducere.setPreferredSize(new Dimension(600, 200));
+                 panouIntroducere.setMinimumSize(new Dimension(600, 200));
+                 panouIntroducere.setMaximumSize(new Dimension(600, 200));
+                 
+                 panouAfisare.setPreferredSize(new Dimension(600,200));
+                 panouAfisare.setMinimumSize(new Dimension(600, 200));
+                 panouAfisare.setMaximumSize(new Dimension(600, 200));
+                 
+                 panouButoane.setPreferredSize(new Dimension(600,100));
+                 panouButoane.setMinimumSize(new Dimension(600, 100));
+                 panouButoane.setMaximumSize(new Dimension(600, 100));                 
+                 
+                 panouIntroducere.add(numeLabel);
+                 panouIntroducere.add(numeText);
+                 
+                 panouIntroducere.add(prenumeLabel);
+                 panouIntroducere.add(prenumeText);
+                 
+                 panouIntroducere.add(cnpLabel);
+                 panouIntroducere.add(cnpText);
+                 
+                 panouIntroducere.add(telefonLabel);
+                 panouIntroducere.add(telefonText);
+                 
 		 panouIntroducere.setVisible(true);
 		 
+		 panouButoane.add(adaugaAbonat);
+		 panouButoane.add(salveazaAbonat);
+		 panouButoane.add(stergeAbonat);
+		 panouButoane.add(actualizeazaAbonat);
+		 panouButoane.add(anuleazaInregistrare);
+		 
+		 panouButoane.setVisible(true);
 		 
 		 tabelDate.setFillsViewportHeight(true);
 		 
 		 frame.setLayout(layoutPrincipal);
-		 frame.setSize(600, 400);
+		 frame.setSize(600, 500);
 		 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 frame.setTitle("Agenda Telefonica");
-		 frame.add(panouIntroducere,BorderLayout.WEST);
-		 frame.add(panouAfisare,BorderLayout.SOUTH);
+		 frame.add(panouIntroducere,BorderLayout.NORTH);
+		 frame.add(panouAfisare,BorderLayout.CENTER);
+		 frame.add(panouButoane, BorderLayout.SOUTH);
 		 frame.setVisible(true);		 
 	}
 	
