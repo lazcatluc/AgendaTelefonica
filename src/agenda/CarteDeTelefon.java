@@ -10,15 +10,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -179,6 +174,7 @@ public class CarteDeTelefon extends JFrame{
         JButton stergeAbonat = new JButton("Stergere");
         JButton actualizeazaAbonat = new JButton("Actualizare");
         JButton anuleazaInregistrare = new JButton("Anulare");
+        JButton cautaAbonat = new JButton("Cautare");
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -225,6 +221,15 @@ public class CarteDeTelefon extends JFrame{
 	        }
         });
         
+        cautaAbonat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cautareAbonat();
+				
+			}
+		});
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -248,6 +253,12 @@ public class CarteDeTelefon extends JFrame{
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panouButoanePrincipale.add(anuleazaInregistrare,gbc);
+        
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.gridheight = 2;
+        panouButoanePrincipale.add(cautaAbonat,gbc);
         
         return panouButoanePrincipale;
 
