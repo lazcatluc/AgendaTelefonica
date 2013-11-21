@@ -2,7 +2,6 @@ package agenda;
 
 import database.MySQL;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,9 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,16 +28,16 @@ public class CarteDeTelefon extends JFrame{
     private TipNumarTelefon nrTel = new TipNumarTelefon();
     private static Connection conn;
     private static Statement sent;
+    
+    private DefaultTableModel model;
+    private JTable tabelPopulat = new JTable();
     private JScrollPane panouAfisare;
-    private JTable tabelDate;
-
+    
     private JTextField numeText = new JTextField(10);
     private JTextField prenumeText = new JTextField(10);
     private JTextField cnpText = new JTextField(10);
     private JTextField telefonText = new JTextField(10);
 
-	private DefaultTableModel model;
-    
     public CarteDeTelefon() {
         conn = MySQL.getConnection();
         afisare();
@@ -57,115 +53,140 @@ public class CarteDeTelefon extends JFrame{
     
     private void dezactivareInput() {
          numeText.setEnabled(false);
-         numeText.setText(null);
-         
          prenumeText.setEnabled(false);
-         prenumeText.setText(null);
-         
          cnpText.setEnabled(false);
-         cnpText.setText(null);
-         
          telefonText.setEnabled(false);
-         telefonText.setText(null);
     }
     
-
+    private void stergereInput() {
+        numeText.setText(null);
+        prenumeText.setText(null);
+        cnpText.setText(null);
+        telefonText.setText(null);
+    }
+    
+    private JScrollPane populareTabel() {
+	
+	try {
+	    conn = MySQL.getConnection();
+	    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
+	    String sql = "select * from abonat";
+	    model = new DefaultTableModel(null,coloane);
+	    sent = conn.createStatement();
+	    ResultSet rs = sent.executeQuery(sql);
+	    
+	    String[] inregistrare = new String[5];
+	    
+	    while(rs.next()) {
+		inregistrare[0] = rs.getString("id");
+		inregistrare[1] = rs.getString("nume");
+		inregistrare[2] = rs.getString("prenume");
+		inregistrare[3] = rs.getString("cnp");
+		inregistrare[4] = rs.getString("telefon");
+		model.addRow(inregistrare);
+	    }
+	    tabelPopulat.setModel(model);
+	} catch(Exception ex) {
+	    ex.printStackTrace();
+	}
+	panouAfisare = new JScrollPane(tabelPopulat);
+	return panouAfisare;
+    }
     
     private JPanel interfataAdaugare() {
-        JPanel panouInterfataAdaugare = new JPanel();
-        panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
-		JLabel cautareLabel = new JLabel("Cauta ");
-		JTextField cautareText = new JTextField(10);
-		
-		JLabel numeLabel = new JLabel("Nume");
-	    JLabel prenumeLabel = new JLabel("Prenume");
-	    JLabel cnpLabel = new JLabel("CNP");
-	    JLabel telefonLabel = new JLabel("Telefon");
-		
-		panouInterfataAdaugare.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(2,2,2,2);
-		gbc.anchor = GridBagConstraints.NORTHEAST;
-		
-		cautareText.setMinimumSize(cautareText.getPreferredSize());
-		numeText.setMinimumSize(cautareText.getPreferredSize());
-		prenumeText.setMinimumSize(cautareText.getPreferredSize());
-		cnpText.setMinimumSize(cautareText.getPreferredSize());
-		telefonText.setMinimumSize(cautareText.getPreferredSize());
-		
-		
-		int i=0;
-		
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		panouInterfataAdaugare.add(cautareLabel,gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cautareText,gbc);
-		
-		i++;
-		
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(numeLabel,gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(numeText,gbc);		
+	JPanel panouInterfataAdaugare = new JPanel();
+	panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
+	JLabel cautareLabel = new JLabel("Cauta ");
+	JTextField cautareText = new JTextField(10);
 
-		i++;
-		
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(prenumeLabel,gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(prenumeText,gbc);		
+	JLabel numeLabel = new JLabel("Nume");
+	JLabel prenumeLabel = new JLabel("Prenume");
+	JLabel cnpLabel = new JLabel("CNP");
+	JLabel telefonLabel = new JLabel("Telefon");
 
-		i++;
-		
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(cnpLabel,gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cnpText,gbc);		
+	panouInterfataAdaugare.setLayout(new GridBagLayout());
+	GridBagConstraints gbc = new GridBagConstraints();
+	gbc.insets = new Insets(2,2,2,2);
+	gbc.anchor = GridBagConstraints.NORTHEAST;
 
-		i++;
-		
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(telefonLabel,gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(telefonText,gbc);		
+	cautareText.setMinimumSize(cautareText.getPreferredSize());
+	numeText.setMinimumSize(cautareText.getPreferredSize());
+	prenumeText.setMinimumSize(cautareText.getPreferredSize());
+	cnpText.setMinimumSize(cautareText.getPreferredSize());
+	telefonText.setMinimumSize(cautareText.getPreferredSize());
+	
+	
+	int i=0;
+	
+	gbc.gridx = 0;
+	gbc.gridy = i;
+	panouInterfataAdaugare.add(cautareLabel,gbc);
+	
+	gbc.gridx = 1;
+	gbc.gridy = i;
+	gbc.gridwidth = 2;
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	panouInterfataAdaugare.add(cautareText,gbc);
+	
+	i++;
+	
+	gbc.gridx = 0;
+	gbc.gridy = i;
+	gbc.gridwidth = 1;
+	gbc.fill = GridBagConstraints.NONE;
+	panouInterfataAdaugare.add(numeLabel,gbc);
+	
+	gbc.gridx = 1;
+	gbc.gridy = i;
+	gbc.gridwidth = 2;
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	panouInterfataAdaugare.add(numeText,gbc);		
 
-		
+	i++;
+	
+	gbc.gridx = 0;
+	gbc.gridy = i;
+	gbc.gridwidth = 1;
+	gbc.fill = GridBagConstraints.NONE;
+	panouInterfataAdaugare.add(prenumeLabel,gbc);
+	
+	gbc.gridx = 1;
+	gbc.gridy = i;
+	gbc.gridwidth = 2;
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	panouInterfataAdaugare.add(prenumeText,gbc);		
+
+	i++;
+	
+	gbc.gridx = 0;
+	gbc.gridy = i;
+	gbc.gridwidth = 1;
+	gbc.fill = GridBagConstraints.NONE;
+	panouInterfataAdaugare.add(cnpLabel,gbc);
+	
+	gbc.gridx = 1;
+	gbc.gridy = i;
+	gbc.gridwidth = 2;
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	panouInterfataAdaugare.add(cnpText,gbc);		
+
+	i++;
+	
+	gbc.gridx = 0;
+	gbc.gridy = i;
+	gbc.gridwidth = 1;
+	gbc.fill = GridBagConstraints.NONE;
+	panouInterfataAdaugare.add(telefonLabel,gbc);
+	
+	gbc.gridx = 1;
+	gbc.gridy = i;
+	gbc.gridwidth = 2;
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	panouInterfataAdaugare.add(telefonText,gbc);		
+
+	
 	return panouInterfataAdaugare;
     }
-    
     
     private JPanel interfataButoanePrincipale() {
         JPanel panouButoanePrincipale = new JPanel(new GridBagLayout());
@@ -194,6 +215,7 @@ public class CarteDeTelefon extends JFrame{
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	        	adaugareAbonat();
+	        	stergereInput();
 	        }
 	    });
         
@@ -201,7 +223,7 @@ public class CarteDeTelefon extends JFrame{
         
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	            stergeAbonat();
+	            stergereInput();
 	        }
 	    });
         
@@ -275,18 +297,6 @@ public class CarteDeTelefon extends JFrame{
     	return panouButoaneTabel;
     }
     
-    public JScrollPane tabelAbonati() {
-        
-        tabelDate = new JTable(afisareAbonati());
-        tabelDate.setFillsViewportHeight(true);
-        panouAfisare = new JScrollPane(tabelDate);
-        panouAfisare.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        
-        panouAfisare.setPreferredSize(new Dimension(400,300));
-        
-        return panouAfisare;
-    }
-    
     public void afisare() {
         
         dezactivareInput(); 
@@ -309,7 +319,7 @@ public class CarteDeTelefon extends JFrame{
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        panouPrincipal.add(actualizareTabel(),gbc);
+        panouPrincipal.add(populareTabel(),gbc);
         
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridx = 0;
@@ -365,8 +375,8 @@ public class CarteDeTelefon extends JFrame{
                 
                 int n = ps.executeUpdate();
                 if(n>0) {
-                		actualizareTabel();
-                        JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
+                    stergereInput();
+                    JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
                 }
             } catch(SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
@@ -374,77 +384,20 @@ public class CarteDeTelefon extends JFrame{
             }
         } 
         
+
+        
     }
         
     private void cautareAbonat() {
     }
-    
+   
     private void stergeAbonat() {
     }
     
     private void modificaAbonat() {
     }
     
-    public JScrollPane actualizareTabel() {
-    	try {
-    		
-    	String[] coloane = {"ID","Nume","Prenume","CNP","Telefon"};
-        String afiseazaQuery = "SELECT * FROM ABONAT";
-        
-        sent = conn.createStatement();
-        ResultSet rs = sent.executeQuery(afiseazaQuery);
-        
-        String[] abonat = new String[5];
-        while(rs.next()) {
-        	abonat[0] = rs.getString("id");
-        	abonat[1] = rs.getString("nume");
-        	abonat[2] = rs.getString("prenume");
-        	abonat[3] = rs.getString("cnp");
-        	abonat[4] = rs.getString("telefon");
-        	model.addRow(abonat);
-        }
-        model = new DefaultTableModel(null,coloane);
-        tabelDate.setModel(model);
-    	} catch(Exception e) {
-    		
-    	}
-    	panouAfisare = new JScrollPane(tabelDate);
-        panouAfisare.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panouAfisare.setPreferredSize(new Dimension(400,300));
-        
-        return panouAfisare;
-    }
-    
-    private static DefaultTableModel afisareAbonati(){
-    	
-        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        Vector<String> numeColoane = new Vector<String>();
-        DefaultTableModel tabelAbonati = new DefaultTableModel(data,numeColoane);
-        numeColoane.add("Nr. #");
-        numeColoane.add("Nume");
-        numeColoane.add("Prenume");
-        numeColoane.add("CNP");
-        numeColoane.add("Telefon");
-        
-        
-        try {
-            String afiseazaQuery = "SELECT * FROM ABONAT";
-            sent = conn.createStatement();
-            ResultSet rs = sent.executeQuery(afiseazaQuery);
-            while(rs.next()) {
-            	Vector<Object> rand = new Vector<Object>(5);
-            	for(int indexColoana = 1; indexColoana <=5; indexColoana ++) {
-            		rand.add(rs.getObject(indexColoana));
-            	}
-                data.add(rand);
-            }
-            
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-        
-        return tabelAbonati;
-    }
+
     
     public static void main(String[] args) {
             CarteDeTelefon agenda = new CarteDeTelefon();
