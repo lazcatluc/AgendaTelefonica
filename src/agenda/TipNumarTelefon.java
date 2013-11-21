@@ -6,10 +6,9 @@ public class TipNumarTelefon {
 	private static final String identificareNumarFix = "02";
 	private static final String identificareNumarMobil = "07";
 
-	public NrTel getTipNumarTel(String numarTel) {
+	public NrTel getTipNumarTel(String numarTel) throws Exception {
 		if((numarTel==null) || (numarTel.length() != lungimeNumar)) {
-			System.out.println("ERR: Formatul numarlui introdus este incorect!");
-			return null;
+			throw new Exception("Formatul numarlui introdus este incorect!");
 		}
 		
 		
@@ -18,8 +17,7 @@ public class TipNumarTelefon {
 		} else if(numarTel.startsWith(identificareNumarFix)){
 			return new NrFix(numarTel);
 		} else {
-			System.out.println("ERR: Nu ati introdus un numar de fix sau de mobil!");
-			return null;
+			throw new Exception("Formatul numarlui introdus este incorect!");
 		}
 	}
 }
