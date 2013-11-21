@@ -18,6 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 public class CarteDeTelefon extends JFrame{
@@ -44,7 +47,92 @@ public class CarteDeTelefon extends JFrame{
         
     }
     
-    private void activareInput() {
+    class ActivareInput implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+	    	activareInput();
+	    }
+	}
+
+	class SalveazaAbonat implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+	    	adaugareAbonat();
+	    	stergereInput();
+	    }
+	}
+
+	class StergeAbonat implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+	    	stergereInput();
+	    }
+	}
+
+	class ActualizeazaAbonat implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+	        modificaAbonat();
+	    }
+	}
+
+	class AnuleazaInput implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+	    	stergereInput();
+	        dezactivareInput();        
+	    }
+	}
+
+	class CautaAbonat implements ActionListener {
+	    public void actionPerformed(ActionEvent arg0) {
+			cautareAbonat();
+	    }
+	}
+
+	public void afisare() {
+	    
+	    dezactivareInput(); 
+	    JPanel panouPrincipal = new JPanel(new GridBagLayout());
+	    this.getContentPane().add(panouPrincipal);
+	
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.insets = new Insets(10, 0, 0, 0);
+	    
+	    JLabel eticheta = new JLabel("Abonati");
+	
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panouPrincipal.add(eticheta,gbc);
+	
+	    gbc.anchor = GridBagConstraints.CENTER;
+	    gbc.gridx = 0;
+	    gbc.gridy = 1;
+	    gbc.fill = GridBagConstraints.BOTH;
+	    gbc.weightx = 1.0;
+	    gbc.weighty = 1.0;
+	    panouPrincipal.add(populareTabel(),gbc);
+	    
+	    gbc.fill = GridBagConstraints.NONE;
+	    gbc.gridx = 0;
+	    gbc.gridy = 2;
+	    gbc.weightx = 0;
+	    gbc.weighty = 0;
+	    panouPrincipal.add(interfataButoaneTabel(), gbc);
+	    
+	    gbc.gridx = 0;
+	    gbc.gridy = 3;
+	    gbc.gridwidth = 2;
+	    panouPrincipal.add(interfataButoanePrincipale(),gbc);
+	    
+	    gbc.gridx = 1;
+	    gbc.gridy = 1;
+	    gbc.gridwidth = 1;
+	    gbc.gridheight = 2;
+		gbc.anchor = GridBagConstraints.NORTH;
+	    panouPrincipal.add(interfataAdaugare(), gbc);
+	    
+	    this.pack();
+	    this.setVisible(true);         
+	}
+
+	private void activareInput() {
          numeText.setEnabled(true);
          prenumeText.setEnabled(true);
          cnpText.setEnabled(true);
@@ -66,29 +154,29 @@ public class CarteDeTelefon extends JFrame{
     }
     
     private JScrollPane populareTabel() {
-	
-	try {
-	    conn = MySQL.getConnection();
-	    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
-	    String sql = "select * from abonat";
-	    model = new DefaultTableModel(null,coloane);
-	    sent = conn.createStatement();
-	    ResultSet rs = sent.executeQuery(sql);
-	    
-	    String[] inregistrare = new String[5];
-	    
-	    while(rs.next()) {
-		inregistrare[0] = rs.getString("id");
-		inregistrare[1] = rs.getString("nume");
-		inregistrare[2] = rs.getString("prenume");
-		inregistrare[3] = rs.getString("cnp");
-		inregistrare[4] = rs.getString("telefon");
-		model.addRow(inregistrare);
-	    }
-	    tabelPopulat.setModel(model);
-	} catch(Exception ex) {
-	    ex.printStackTrace();
-	}
+		try {
+		    conn = MySQL.getConnection();
+		    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
+		    String sql = "select * from abonat";
+		    model = new DefaultTableModel(null,coloane);
+		    sent = conn.createStatement();
+		    ResultSet rs = sent.executeQuery(sql);
+		    
+		    String[] inregistrare = new String[5];
+		    
+		    while(rs.next()) {
+			inregistrare[0] = rs.getString("id");
+			inregistrare[1] = rs.getString("nume");
+			inregistrare[2] = rs.getString("prenume");
+			inregistrare[3] = rs.getString("cnp");
+			inregistrare[4] = rs.getString("telefon");
+			model.addRow(inregistrare);
+		    }
+		    tabelPopulat.setModel(model);
+		    tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+		} catch(Exception ex) {
+		    ex.printStackTrace();
+		}
 	panouAfisare = new JScrollPane(tabelPopulat);
 	return panouAfisare;
     }
@@ -201,56 +289,13 @@ public class CarteDeTelefon extends JFrame{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(1, 1, 1, 1);
 
-        
-        adaugaAbonat.addActionListener(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	activareInput();
-            }
-        });
-        
-        salveazaAbonat.addActionListener(new ActionListener() {
-        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	        	adaugareAbonat();
-	        	stergereInput();
-	        }
-	    });
-        
-        stergeAbonat.addActionListener(new ActionListener() {
-        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            stergereInput();
-	        }
-	    });
-        
-        actualizeazaAbonat.addActionListener(new ActionListener() {
-        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            modificaAbonat();
-	        }
-	    });
-        
-        anuleazaInregistrare.addActionListener(new ActionListener() {
-        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            dezactivareInput();
-	        }
-        });
-        
-        cautaAbonat.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cautareAbonat();
-				
-			}
-		});
+
+        adaugaAbonat.addActionListener(new ActivareInput());
+        salveazaAbonat.addActionListener(new SalveazaAbonat());
+        stergeAbonat.addActionListener(new StergeAbonat());
+        actualizeazaAbonat.addActionListener(new ActualizeazaAbonat());
+        anuleazaInregistrare.addActionListener(new AnuleazaInput());
+        cautaAbonat.addActionListener(new CautaAbonat());
         
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -295,53 +340,6 @@ public class CarteDeTelefon extends JFrame{
     	panouButoaneTabel.add(new JButton("Modificare"));
 
     	return panouButoaneTabel;
-    }
-    
-    public void afisare() {
-        
-        dezactivareInput(); 
-        JPanel panouPrincipal = new JPanel(new GridBagLayout());
-        this.getContentPane().add(panouPrincipal);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 0, 0, 0);
-        
-        JLabel eticheta = new JLabel("Abonati");
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        panouPrincipal.add(eticheta,gbc);
-       
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        panouPrincipal.add(populareTabel(),gbc);
-        
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        panouPrincipal.add(interfataButoaneTabel(), gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        panouPrincipal.add(interfataButoanePrincipale(),gbc);
-        
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 2;
-		gbc.anchor = GridBagConstraints.NORTH;
-        panouPrincipal.add(interfataAdaugare(), gbc);
-        
-        this.pack();
-        this.setVisible(true);         
     }
     
     private void adaugareAbonat(){
