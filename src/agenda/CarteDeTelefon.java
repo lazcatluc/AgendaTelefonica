@@ -283,7 +283,6 @@ public class CarteDeTelefon extends JFrame{
         try {
             numar = nrTel.getTipNumarTel(telefon);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
                 JOptionPane.showMessageDialog(null, "Eroare: " + e.getMessage());
         }
         
