@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -57,6 +59,7 @@ public class CarteDeTelefon extends JFrame{
 	    public void actionPerformed(ActionEvent arg0) {
 	    	adaugareAbonat();
 	    	stergereInput();
+	    	populareTabel();
 	    }
 	}
 
@@ -84,6 +87,7 @@ public class CarteDeTelefon extends JFrame{
 			cautareAbonat();
 	    }
 	}
+
 
 	public void afisare() {
 	    
@@ -345,7 +349,7 @@ public class CarteDeTelefon extends JFrame{
     private void adaugareAbonat(){
         
     	NrTel numar = null;
-        String nume = numeText.getText();;
+        String nume = numeText.getText();
         String prenume = prenumeText.getText();
         String cnp = cnpText.getText();
         String telefon = telefonText.getText();    
