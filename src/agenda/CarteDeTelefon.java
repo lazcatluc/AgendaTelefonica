@@ -83,18 +83,19 @@ public class CarteDeTelefon extends JFrame{
     
     private JPanel panouIntroducere() {
 	panouIntroducere = new JPanel(new GridBagLayout());
-        panouIntroducere.setPreferredSize(new Dimension(300, 400));
+	panouIntroducere.setPreferredSize(new Dimension(400,300));
 
         GridBagConstraints gbc = new GridBagConstraints();
+
+        int i=0;
+        
         gbc.insets = new Insets(2,2,2,2);
         gbc.anchor = GridBagConstraints.NORTHEAST;
         
-        int i=0;
+
 
         gbc.gridx = 0;
         gbc.gridy = i;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
         panouIntroducere.add(numeLabel,gbc);
 
         gbc.gridx = 1;
@@ -148,8 +149,6 @@ public class CarteDeTelefon extends JFrame{
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panouIntroducere.add(telefonText,gbc);
  
-        i++;
-        
         return panouIntroducere;
     }
     
@@ -241,31 +240,32 @@ public class CarteDeTelefon extends JFrame{
         this.getContentPane().add(panouPrincipal);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
         JLabel label = new JLabel("Abonati");
 
+        gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = 0;
         panouPrincipal.add(label,gbc);
        
+        gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         panouPrincipal.add(tabelAbonati(),gbc);
         
+        gbc.anchor = GridBagConstraints.NORTH;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.NORTH;
         panouPrincipal.add(panouButoane(), gbc);
         
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 2;
-        gbc.anchor = GridBagConstraints.NORTH;
+
         panouPrincipal.add(panouIntroducere(), gbc);
         
         this.pack();
@@ -356,7 +356,8 @@ public class CarteDeTelefon extends JFrame{
                 abonat[2] = rs.getString("prenume");
                 abonat[3] = rs.getString("cnp");
                 abonat[4] = rs.getString("telefon");
-                System.out.println(abonat[0] + " " + abonat[1] + " " + abonat[2] + " " + abonat[3] + " " + abonat[4]);
+                Object[] inregistrariDB = {abonat[0],abonat[1],abonat[2],abonat[3],abonat[4]};
+                
             }
             
         } catch(Exception ex) {
@@ -371,7 +372,7 @@ public class CarteDeTelefon extends JFrame{
     
     public static void main(String[] args) {
             CarteDeTelefon agenda = new CarteDeTelefon();
-            agenda.setSize(600, 500);
+            //agenda.setSize(600, 500);
             agenda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             agenda.setTitle("Agenda Telefonica");
             agenda.pack();
