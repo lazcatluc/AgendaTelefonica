@@ -9,8 +9,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,8 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class CarteDeTelefon extends JFrame{
@@ -70,7 +68,7 @@ public class CarteDeTelefon extends JFrame{
 
 	class ActualizeazaAbonat implements ActionListener {
 	    public void actionPerformed(ActionEvent arg0) {
-	        modificaAbonat();
+	        actualizeazaAbonat();
 	    }
 	}
 
@@ -85,6 +83,15 @@ public class CarteDeTelefon extends JFrame{
 	    public void actionPerformed(ActionEvent arg0) {
 			cautareAbonat();
 	    }
+	}
+	
+	class SelectieTabel implements ListSelectionListener {
+			@Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                	selecteazaRand();
+                }
+            }
 	}
 
 
@@ -158,7 +165,6 @@ public class CarteDeTelefon extends JFrame{
     
     void actualizareTabel() {
 		try {
-		    conn = MySQL.getConnection();
 		    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
 		    String sql = "select * from abonat";
 		    model = new DefaultTableModel(null,coloane);
@@ -168,18 +174,38 @@ public class CarteDeTelefon extends JFrame{
 		    String[] inregistrare = new String[5];
 		    
 		    while(rs.next()) {
-			inregistrare[0] = rs.getString("id");
-			inregistrare[1] = rs.getString("nume");
-			inregistrare[2] = rs.getString("prenume");
-			inregistrare[3] = rs.getString("cnp");
-			inregistrare[4] = rs.getString("telefon");
-			model.addRow(inregistrare);
+				inregistrare[0] = rs.getString("id");
+				inregistrare[1] = rs.getString("nume");
+				inregistrare[2] = rs.getString("prenume");
+				inregistrare[3] = rs.getString("cnp");
+				inregistrare[4] = rs.getString("telefon");
+				model.addRow(inregistrare);
 		    }
 		    tabelPopulat.setModel(model);
 		    tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+		    tabelPopulat.getSelectionModel().addListSelectionListener(new SelectieTabel());
 		} catch(Exception ex) {
 		    ex.printStackTrace();
 		}
+    }
+    
+    void selecteazaRand() {
+		activareInput();
+    	try {
+    		int rand = tabelPopulat.getSelectedRow();
+    		String sql = "select * from abonat where id=" +tabelPopulat.getValueAt(rand, 0);
+    		sent = conn.createStatement();
+    		ResultSet rs = sent.executeQuery(sql);
+    		rs.next();
+    		numeText.setText(rs.getString("nume"));
+    		prenumeText.setText(rs.getString("prenume"));
+    		cnpText.setText(rs.getString("cnp"));
+    		telefonText.setText(rs.getString("telefon"));
+    	} catch(Exception ex) {
+    		ex.printStackTrace();
+    		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+    	}
+
     }
     
     private JPanel interfataAdaugare() {
@@ -360,7 +386,7 @@ public class CarteDeTelefon extends JFrame{
         
         if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
             && (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
-        Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
+        	Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
 
             try {
                 String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
@@ -394,9 +420,31 @@ public class CarteDeTelefon extends JFrame{
     private void stergeAbonat() {
     }
     
-    private void modificaAbonat() {
-    }
+    private void actualizeazaAbonat() {
+        try {
+            String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
+                    + " WHERE id=?";
+            int rand = tabelPopulat.getSelectedRow();
+            String id = (String) tabelPopulat.getValueAt(rand, 0);
+            PreparedStatement ps = conn.prepareStatement(adaugaQuery);
+            ps.setString(1, numeText.getText());
+            ps.setString(2, prenumeText.getText());
+            ps.setString(3, cnpText.getText());
+            ps.setString(4, telefonText.getText());
+            ps.setString(5, id);
+            int n = ps.executeUpdate();
+            if(n>0) {
+            	actualizareTabel();
+                stergereInput();
+                JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
+            }
+        } catch(SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+            
+        }
+    } 
     
+ 
 
     
     public static void main(String[] args) {
