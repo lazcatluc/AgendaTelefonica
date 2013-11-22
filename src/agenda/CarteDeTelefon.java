@@ -36,7 +36,6 @@ public class CarteDeTelefon extends JFrame{
     
     private DefaultTableModel model;
     private JTable tabelPopulat = new JTable();
-    private JScrollPane panouAfisare;
     
     private JTextField numeText = new JTextField(10);
     private JTextField prenumeText = new JTextField(10);
@@ -59,8 +58,8 @@ public class CarteDeTelefon extends JFrame{
 	    public void actionPerformed(ActionEvent arg0) {
 	    	adaugareAbonat();
 	    	stergereInput();
-	    	populareTabel();
-	    }
+	    	actualizareTabel();
+}
 	}
 
 	class StergeAbonat implements ActionListener {
@@ -90,7 +89,7 @@ public class CarteDeTelefon extends JFrame{
 
 
 	public void afisare() {
-	    
+	    actualizareTabel();
 	    dezactivareInput(); 
 	    JPanel panouPrincipal = new JPanel(new GridBagLayout());
 	    this.getContentPane().add(panouPrincipal);
@@ -111,7 +110,7 @@ public class CarteDeTelefon extends JFrame{
 	    gbc.fill = GridBagConstraints.BOTH;
 	    gbc.weightx = 1.0;
 	    gbc.weighty = 1.0;
-	    panouPrincipal.add(populareTabel(),gbc);
+	    panouPrincipal.add(new JScrollPane(tabelPopulat),gbc);
 	    
 	    gbc.fill = GridBagConstraints.NONE;
 	    gbc.gridx = 0;
@@ -157,7 +156,7 @@ public class CarteDeTelefon extends JFrame{
         telefonText.setText(null);
     }
     
-    private JScrollPane populareTabel() {
+    void actualizareTabel() {
 		try {
 		    conn = MySQL.getConnection();
 		    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
@@ -181,8 +180,6 @@ public class CarteDeTelefon extends JFrame{
 		} catch(Exception ex) {
 		    ex.printStackTrace();
 		}
-	panouAfisare = new JScrollPane(tabelPopulat);
-	return panouAfisare;
     }
     
     private JPanel interfataAdaugare() {
@@ -377,6 +374,7 @@ public class CarteDeTelefon extends JFrame{
                 
                 int n = ps.executeUpdate();
                 if(n>0) {
+                	actualizareTabel();
                     stergereInput();
                     JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
                 }
