@@ -29,8 +29,8 @@ public class CarteDeTelefon extends JFrame{
     private static final long serialVersionUID = 1L;
     
     private TipNumarTelefon nrTel = new TipNumarTelefon();
-    private static Connection conn;
-    private static Statement sent;
+    private Connection conn;
+    private Statement stmt;
     
     private DefaultTableModel model;
     private JTable tabelPopulat = new JTable();
@@ -168,8 +168,8 @@ public class CarteDeTelefon extends JFrame{
 		    String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
 		    String sql = "select * from abonat";
 		    model = new DefaultTableModel(null,coloane);
-		    sent = conn.createStatement();
-		    ResultSet rs = sent.executeQuery(sql);
+		    stmt = conn.createStatement();
+		    ResultSet rs = stmt.executeQuery(sql);
 		    
 		    String[] inregistrare = new String[5];
 		    
@@ -194,8 +194,8 @@ public class CarteDeTelefon extends JFrame{
     	try {
     		int rand = tabelPopulat.getSelectedRow();
     		String sql = "select * from abonat where id=" +tabelPopulat.getValueAt(rand, 0);
-    		sent = conn.createStatement();
-    		ResultSet rs = sent.executeQuery(sql);
+    		stmt = conn.createStatement();
+    		ResultSet rs = stmt.executeQuery(sql);
     		rs.next();
     		numeText.setText(rs.getString("nume"));
     		prenumeText.setText(rs.getString("prenume"));
@@ -409,9 +409,6 @@ public class CarteDeTelefon extends JFrame{
                 
             }
         } 
-        
-
-        
     }
         
     private void cautareAbonat() {
@@ -422,8 +419,8 @@ public class CarteDeTelefon extends JFrame{
         try {
             String stergeSQL = "DELETE FROM ABONAT "
                     + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
-            sent = conn.createStatement();
-            int n = sent.executeUpdate(stergeSQL);
+            stmt = conn.createStatement();
+            int n = stmt.executeUpdate(stergeSQL);
             if(n>0) {
                 stergereInput();
                 actualizareTabel();
@@ -451,13 +448,13 @@ public class CarteDeTelefon extends JFrame{
             int n = ps.executeUpdate();
             if(n>0) {
                 stergereInput();
+            	actualizareTabel();
                 JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
             }
         } catch(SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
             
         }
-    	actualizareTabel();
     } 
     
  
