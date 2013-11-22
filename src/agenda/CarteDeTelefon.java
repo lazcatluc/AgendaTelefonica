@@ -62,7 +62,7 @@ public class CarteDeTelefon extends JFrame{
 
 	class StergeAbonat implements ActionListener {
 	    public void actionPerformed(ActionEvent arg0) {
-	    	stergereInput();
+	    	stergeAbonat();
 	    }
 	}
 
@@ -418,6 +418,23 @@ public class CarteDeTelefon extends JFrame{
     }
    
     private void stergeAbonat() {
+        try {
+            String adaugaQuery = "DELETE FROM ABONAT "
+                    + " WHERE id=?";
+            int rand = tabelPopulat.getSelectedRow();
+            String id = (String) tabelPopulat.getValueAt(rand, 0);
+            PreparedStatement ps = conn.prepareStatement(adaugaQuery);
+            ps.setString(1, id);
+            int n = ps.executeUpdate();
+            if(n>0) {
+            	actualizareTabel();
+                stergereInput();
+                JOptionPane.showMessageDialog(null, "Abonat sters!");
+            }
+        } catch(SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+            
+        }
     }
     
     private void actualizeazaAbonat() {
