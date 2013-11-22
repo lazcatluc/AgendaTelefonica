@@ -418,17 +418,16 @@ public class CarteDeTelefon extends JFrame{
     }
    
     private void stergeAbonat() {
+        int rand = tabelPopulat.getSelectedRow();
         try {
-            String adaugaQuery = "DELETE FROM ABONAT "
-                    + " WHERE id=?";
-            int rand = tabelPopulat.getSelectedRow();
-            String id = (String) tabelPopulat.getValueAt(rand, 0);
-            PreparedStatement ps = conn.prepareStatement(adaugaQuery);
-            ps.setString(1, id);
-            int n = ps.executeUpdate();
+            String stergeSQL = "DELETE FROM ABONAT "
+                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
+            sent = conn.createStatement();
+            int n = sent.executeUpdate(stergeSQL);
             if(n>0) {
-            	actualizareTabel();
                 stergereInput();
+                actualizareTabel();
+                dezactivareInput();
                 JOptionPane.showMessageDialog(null, "Abonat sters!");
             }
         } catch(SQLException ex) {
@@ -451,7 +450,6 @@ public class CarteDeTelefon extends JFrame{
             ps.setString(5, id);
             int n = ps.executeUpdate();
             if(n>0) {
-            	actualizareTabel();
                 stergereInput();
                 JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
             }
@@ -459,6 +457,7 @@ public class CarteDeTelefon extends JFrame{
                 JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
             
         }
+    	actualizareTabel();
     } 
     
  
