@@ -425,16 +425,32 @@ public class CarteDeTelefon extends JFrame{
     private void cautareAbonat() {
     	
     	try {
-    		String textCautat = cautareText.getText();
+    		String textCautat = cautareText.getText().trim();
     		if (textCautat!=null & textCautat.length()>0) {
 	    		String sql = "SELECT nume,prenume,cnp,telefon from abonat "
 	    				+ "where nume like '%"+textCautat+"%' "
 	    				+ "or prenume like '%"+textCautat+"%' "
 	    				+ "or cnp like '%"+textCautat+"%' "
 	    				+ "or telefon like '%"+textCautat+"%'";
+	    		String sqlRezultate = "SELECT COUNT(*) as rezultate FROM ( "+sql+" ) as inregistrari";
 	    		stmt = conn.createStatement();
+
+	    		int rezultate = 0;
+	    		ResultSet rsRezultate = stmt.executeQuery(sqlRezultate);
+	    		rsRezultate.next();
+	    		rezultate = rsRezultate.getInt(1);
+        		rsRezultate.close();
+        		
 	    		ResultSet rs = stmt.executeQuery(sql);
-	    		if(rs.next()) {
+        		if(rezultate==1) {
+        			rs.next();
+		    		numeText.setText(rs.getString("nume"));
+		    		prenumeText.setText(rs.getString("prenume"));
+		    		cnpText.setText(rs.getString("cnp"));
+		    		telefonText.setText(rs.getString("telefon"));
+	    		} else if(rezultate>1) {
+	    			JOptionPane.showMessageDialog(null, "Am gasit : " + rezultate +" rezultate. Cautati dupa telefon sau CNP pentru rezultate unice!");
+        			rs.next();
 		    		numeText.setText(rs.getString("nume"));
 		    		prenumeText.setText(rs.getString("prenume"));
 		    		cnpText.setText(rs.getString("cnp"));
@@ -446,6 +462,7 @@ public class CarteDeTelefon extends JFrame{
         		JOptionPane.showMessageDialog(null, "Completati campul de cautare!");
     		}
     	} catch(Exception ex) {
+    		ex.printStackTrace();
     		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
     	}
     	
