@@ -221,7 +221,9 @@ public class CarteDeTelefon extends JFrame{
 	JPanel panouInterfataAdaugare = new JPanel();
 	panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
 	JLabel cautareLabel = new JLabel("Cauta ");
-	JTextField cautareText = new JTextField(10);
+    JButton cautaAbonat = new JButton("Cautare");
+    cautaAbonat.addActionListener(new CautaAbonat());
+    JTextField cautareText = new JTextField(10);
 
 	JLabel numeLabel = new JLabel("Nume");
 	JLabel prenumeLabel = new JLabel("Prenume");
@@ -306,7 +308,15 @@ public class CarteDeTelefon extends JFrame{
 	gbc.gridy = i;
 	gbc.gridwidth = 2;
 	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(telefonText,gbc);		
+	panouInterfataAdaugare.add(telefonText,gbc);
+	
+	i++;
+	
+	gbc.gridx = 1;
+    gbc.gridy = i;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    panouInterfataAdaugare.add(cautaAbonat,gbc);
+	
 
 	
 	return panouInterfataAdaugare;
@@ -319,7 +329,7 @@ public class CarteDeTelefon extends JFrame{
         JButton stergeAbonat = new JButton("Stergere");
         JButton actualizeazaAbonat = new JButton("Actualizare");
         JButton anuleazaInregistrare = new JButton("Anulare");
-        JButton cautaAbonat = new JButton("Cautare");
+
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -331,7 +341,6 @@ public class CarteDeTelefon extends JFrame{
         stergeAbonat.addActionListener(new StergeAbonat());
         actualizeazaAbonat.addActionListener(new ActualizeazaAbonat());
         anuleazaInregistrare.addActionListener(new AnuleazaInput());
-        cautaAbonat.addActionListener(new CautaAbonat());
         
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -356,12 +365,6 @@ public class CarteDeTelefon extends JFrame{
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panouButoanePrincipale.add(anuleazaInregistrare,gbc);
-        
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        gbc.gridheight = 2;
-        panouButoanePrincipale.add(cautaAbonat,gbc);
         
         return panouButoanePrincipale;
 
