@@ -40,7 +40,8 @@ public class CarteDeTelefon extends JFrame{
     private JTextField prenumeText = new JTextField(10);
     private JTextField cnpText = new JTextField(10);
     private JTextField telefonText = new JTextField(10);
-
+    private JTextField cautareText = new JTextField(10);
+    
     public CarteDeTelefon() {
         conn = MySQL.getConnection();
         afisare();
@@ -158,6 +159,7 @@ public class CarteDeTelefon extends JFrame{
     }
     
     private void stergereInput() {
+    	cautareText.setText(null);
         numeText.setText(null);
         prenumeText.setText(null);
         cnpText.setText(null);
@@ -223,7 +225,6 @@ public class CarteDeTelefon extends JFrame{
 	JLabel cautareLabel = new JLabel("Cauta ");
     JButton cautaAbonat = new JButton("Cautare");
     cautaAbonat.addActionListener(new CautaAbonat());
-    JTextField cautareText = new JTextField(10);
 
 	JLabel numeLabel = new JLabel("Nume");
 	JLabel prenumeLabel = new JLabel("Prenume");
@@ -316,9 +317,7 @@ public class CarteDeTelefon extends JFrame{
     gbc.gridy = i;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     panouInterfataAdaugare.add(cautaAbonat,gbc);
-	
 
-	
 	return panouInterfataAdaugare;
     }
     
@@ -424,6 +423,29 @@ public class CarteDeTelefon extends JFrame{
     }
         
     private void cautareAbonat() {
+    	
+    	try {
+    		String textCautat = cautareText.getText();
+    		if (textCautat!=null & textCautat.length()>0) {
+	    		String sql = "SELECT nume,prenume,cnp,telefon from abonat "
+	    				+ "where nume like '%"+textCautat+"%' "
+	    				+ "or prenume like '%"+textCautat+"%' "
+	    				+ "or cnp like '%"+textCautat+"%' "
+	    				+ "or telefon like '%"+textCautat+"%'";
+	    		stmt = conn.createStatement();
+	    		ResultSet rs = stmt.executeQuery(sql);
+	    		rs.next();
+	    		numeText.setText(rs.getString("nume"));
+	    		prenumeText.setText(rs.getString("prenume"));
+	    		cnpText.setText(rs.getString("cnp"));
+	    		telefonText.setText(rs.getString("telefon"));
+    		} else {
+        		JOptionPane.showMessageDialog(null, "Completati campul de cautare!");
+    		}
+    	} catch(Exception ex) {
+    		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+    	}
+    	
     }
    
     private void stergeAbonat() {
