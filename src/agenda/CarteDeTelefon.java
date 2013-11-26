@@ -34,6 +34,7 @@ public class CarteDeTelefon extends JFrame{
     
     private DefaultTableModel model;
     private JTable tabelPopulat = new JTable();
+    private static int randSelectat = 0;
     
     private JTextField numeText = new JTextField(10);
     private JTextField prenumeText = new JTextField(10);
@@ -193,6 +194,12 @@ public class CarteDeTelefon extends JFrame{
 		activareInput();
     	try {
     		int rand = tabelPopulat.getSelectedRow();
+    		
+    		//La afisarea tabelului se foloseste randul selectat. Dupa modificarea
+    		//datelor, valoarea variabilei "rand" devenea
+    		if(rand==-1) {
+    			rand=randSelectat;
+    		}
     		String sql = "select * from abonat where id=" +tabelPopulat.getValueAt(rand, 0);
     		stmt = conn.createStatement();
     		ResultSet rs = stmt.executeQuery(sql);
@@ -201,6 +208,8 @@ public class CarteDeTelefon extends JFrame{
     		prenumeText.setText(rs.getString("prenume"));
     		cnpText.setText(rs.getString("cnp"));
     		telefonText.setText(rs.getString("telefon"));
+    		
+    		randSelectat=rand;
     	} catch(Exception ex) {
     		ex.printStackTrace();
     		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
