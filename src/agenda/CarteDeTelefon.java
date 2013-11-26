@@ -434,11 +434,14 @@ public class CarteDeTelefon extends JFrame{
 	    				+ "or telefon like '%"+textCautat+"%'";
 	    		stmt = conn.createStatement();
 	    		ResultSet rs = stmt.executeQuery(sql);
-	    		rs.next();
-	    		numeText.setText(rs.getString("nume"));
-	    		prenumeText.setText(rs.getString("prenume"));
-	    		cnpText.setText(rs.getString("cnp"));
-	    		telefonText.setText(rs.getString("telefon"));
+	    		if(rs.next()) {
+		    		numeText.setText(rs.getString("nume"));
+		    		prenumeText.setText(rs.getString("prenume"));
+		    		cnpText.setText(rs.getString("cnp"));
+		    		telefonText.setText(rs.getString("telefon"));
+	    		} else {
+	        		JOptionPane.showMessageDialog(null, "Niciun rezultat gasit!");
+	    		}
     		} else {
         		JOptionPane.showMessageDialog(null, "Completati campul de cautare!");
     		}
