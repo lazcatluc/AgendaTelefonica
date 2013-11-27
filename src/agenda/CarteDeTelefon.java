@@ -24,7 +24,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class CarteDeTelefon extends JFrame{
-    
 
     private static final long serialVersionUID = 1L;
     
@@ -95,7 +94,6 @@ public class CarteDeTelefon extends JFrame{
                 }
             }
 	}
-
 
 	public void afisare() {
 	    actualizareTabel();
@@ -220,103 +218,103 @@ public class CarteDeTelefon extends JFrame{
     }
     
     private JPanel interfataAdaugare() {
-	JPanel panouInterfataAdaugare = new JPanel();
-	panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
-	JLabel cautareLabel = new JLabel("Cauta ");
-    JButton cautaAbonat = new JButton("Cautare");
-    cautaAbonat.addActionListener(new CautaAbonat());
-
-	JLabel numeLabel = new JLabel("Nume");
-	JLabel prenumeLabel = new JLabel("Prenume");
-	JLabel cnpLabel = new JLabel("CNP");
-	JLabel telefonLabel = new JLabel("Telefon");
-
-	panouInterfataAdaugare.setLayout(new GridBagLayout());
-	GridBagConstraints gbc = new GridBagConstraints();
-	gbc.insets = new Insets(2,2,2,2);
-	gbc.anchor = GridBagConstraints.NORTHEAST;
-
-	cautareText.setMinimumSize(cautareText.getPreferredSize());
-	numeText.setMinimumSize(cautareText.getPreferredSize());
-	prenumeText.setMinimumSize(cautareText.getPreferredSize());
-	cnpText.setMinimumSize(cautareText.getPreferredSize());
-	telefonText.setMinimumSize(cautareText.getPreferredSize());
+		JPanel panouInterfataAdaugare = new JPanel();
+		panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
+		JLabel cautareLabel = new JLabel("Cauta ");
+	    JButton cautaAbonat = new JButton("Cautare");
+	    cautaAbonat.addActionListener(new CautaAbonat());
 	
+		JLabel numeLabel = new JLabel("Nume");
+		JLabel prenumeLabel = new JLabel("Prenume");
+		JLabel cnpLabel = new JLabel("CNP");
+		JLabel telefonLabel = new JLabel("Telefon");
 	
-	int i=0;
+		panouInterfataAdaugare.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(2,2,2,2);
+		gbc.anchor = GridBagConstraints.NORTHEAST;
 	
-	gbc.gridx = 0;
-	gbc.gridy = i;
-	panouInterfataAdaugare.add(cautareLabel,gbc);
+		cautareText.setMinimumSize(cautareText.getPreferredSize());
+		numeText.setMinimumSize(cautareText.getPreferredSize());
+		prenumeText.setMinimumSize(cautareText.getPreferredSize());
+		cnpText.setMinimumSize(cautareText.getPreferredSize());
+		telefonText.setMinimumSize(cautareText.getPreferredSize());
+		
+		
+		int i=0;
+		
+		gbc.gridx = 0;
+		gbc.gridy = i;
+		panouInterfataAdaugare.add(cautareLabel,gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = i;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panouInterfataAdaugare.add(cautareText,gbc);
+		
+		i++;
+		
+		gbc.gridx = 0;
+		gbc.gridy = i;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		panouInterfataAdaugare.add(numeLabel,gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = i;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panouInterfataAdaugare.add(numeText,gbc);		
 	
-	gbc.gridx = 1;
-	gbc.gridy = i;
-	gbc.gridwidth = 2;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(cautareText,gbc);
+		i++;
+		
+		gbc.gridx = 0;
+		gbc.gridy = i;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		panouInterfataAdaugare.add(prenumeLabel,gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = i;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panouInterfataAdaugare.add(prenumeText,gbc);		
 	
-	i++;
+		i++;
+		
+		gbc.gridx = 0;
+		gbc.gridy = i;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		panouInterfataAdaugare.add(cnpLabel,gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = i;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panouInterfataAdaugare.add(cnpText,gbc);		
 	
-	gbc.gridx = 0;
-	gbc.gridy = i;
-	gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.NONE;
-	panouInterfataAdaugare.add(numeLabel,gbc);
-	
-	gbc.gridx = 1;
-	gbc.gridy = i;
-	gbc.gridwidth = 2;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(numeText,gbc);		
-
-	i++;
-	
-	gbc.gridx = 0;
-	gbc.gridy = i;
-	gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.NONE;
-	panouInterfataAdaugare.add(prenumeLabel,gbc);
-	
-	gbc.gridx = 1;
-	gbc.gridy = i;
-	gbc.gridwidth = 2;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(prenumeText,gbc);		
-
-	i++;
-	
-	gbc.gridx = 0;
-	gbc.gridy = i;
-	gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.NONE;
-	panouInterfataAdaugare.add(cnpLabel,gbc);
-	
-	gbc.gridx = 1;
-	gbc.gridy = i;
-	gbc.gridwidth = 2;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(cnpText,gbc);		
-
-	i++;
-	
-	gbc.gridx = 0;
-	gbc.gridy = i;
-	gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.NONE;
-	panouInterfataAdaugare.add(telefonLabel,gbc);
-	
-	gbc.gridx = 1;
-	gbc.gridy = i;
-	gbc.gridwidth = 2;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	panouInterfataAdaugare.add(telefonText,gbc);
-	
-	i++;
-	
-	gbc.gridx = 1;
-    gbc.gridy = i;
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    panouInterfataAdaugare.add(cautaAbonat,gbc);
+		i++;
+		
+		gbc.gridx = 0;
+		gbc.gridy = i;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		panouInterfataAdaugare.add(telefonLabel,gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = i;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panouInterfataAdaugare.add(telefonText,gbc);
+		
+		i++;
+		
+		gbc.gridx = 1;
+	    gbc.gridy = i;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    panouInterfataAdaugare.add(cautaAbonat,gbc);
 
 	return panouInterfataAdaugare;
     }
@@ -365,9 +363,7 @@ public class CarteDeTelefon extends JFrame{
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panouButoanePrincipale.add(anuleazaInregistrare,gbc);
         
-        return panouButoanePrincipale;
-
-        
+    return panouButoanePrincipale;
     }
     
     private JPanel interfataButoaneTabel() {
@@ -388,9 +384,6 @@ public class CarteDeTelefon extends JFrame{
         String cnp = cnpText.getText();
         String telefon = telefonText.getText();    
 
-
-        
-        
         if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
             && (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
             
@@ -404,7 +397,6 @@ public class CarteDeTelefon extends JFrame{
             try {
                 String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
                         + "VALUES(?,?,?,?)";
-                
                 PreparedStatement ps = conn.prepareStatement(adaugaQuery);
                 ps.setString(1, abonatUnic.getNume());
                 ps.setString(2, abonatUnic.getPrenume());
@@ -417,9 +409,9 @@ public class CarteDeTelefon extends JFrame{
                     stergereInput();
                     JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
                 }
+                
             } catch(SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-                
             }
         } else {
             JOptionPane.showMessageDialog(null, "Completati toate campurile!");
@@ -427,9 +419,9 @@ public class CarteDeTelefon extends JFrame{
     }
         
     private void cautareAbonat() {
-    	
     	try {
     		String textCautat = cautareText.getText().trim();
+
     		if (textCautat!=null & textCautat.length()>0) {
 	    		String sql = "SELECT nume,prenume,cnp,telefon from abonat "
 	    				+ "where nume like '%"+textCautat+"%' "
@@ -531,9 +523,8 @@ public class CarteDeTelefon extends JFrame{
     
     public static void main(String[] args) {
             CarteDeTelefon agenda = new CarteDeTelefon();
-            
             agenda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            agenda.setLocationRelativeTo ( null );
+            agenda.setLocationRelativeTo (null);
             agenda.setTitle("Agenda Telefonica");
             agenda.pack();
             agenda.setVisible(true);
