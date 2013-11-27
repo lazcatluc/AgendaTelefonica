@@ -473,26 +473,21 @@ public class CarteDeTelefon extends JFrame{
     }
    
     private void stergeAbonat() {
-        int rand = tabelPopulat.getSelectedRow();
-        if(rand != -1) {
 	        try {
-	            String stergeSQL = "DELETE FROM ABONAT "
-	                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
-	            stmt = conn.createStatement();
-	            int n = stmt.executeUpdate(stergeSQL);
-	            if(n>0) {
-	                stergereInput();
-	                actualizareTabel();
-	                dezactivareInput();
-	                JOptionPane.showMessageDialog(null, "Abonat sters!");
-	            }
+	            int rand = tabelPopulat.getSelectedRow();
+		            String stergeSQL = "DELETE FROM ABONAT "
+		                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
+		            stmt = conn.createStatement();
+		            int n = stmt.executeUpdate(stergeSQL);
+		            if(n>0) {
+		                stergereInput();
+		                actualizareTabel();
+		                dezactivareInput();
+		                JOptionPane.showMessageDialog(null, "Abonat sters!");
+		            }
 	        } catch(SQLException ex) {
 	                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
 	        }
-        } else {
-    		JOptionPane.showMessageDialog(null, "Selectati un abonat din tabel!");
-        }
-        
     }
     
     private void actualizeazaAbonat() {
