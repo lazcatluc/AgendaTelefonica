@@ -388,15 +388,17 @@ public class CarteDeTelefon extends JFrame{
         String cnp = cnpText.getText();
         String telefon = telefonText.getText();    
 
-        try {
-            numar = nrTel.getTipNumarTel(telefon);
-        } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Eroare: " + e.getMessage());
-        }
+
         
         
         if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
             && (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
+            
+        	try {
+                numar = nrTel.getTipNumarTel(telefon);
+            } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Eroare: " + e.getMessage());
+            }
         	Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
 
             try {
@@ -419,7 +421,9 @@ public class CarteDeTelefon extends JFrame{
                     JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
                 
             }
-        } 
+        } else {
+            JOptionPane.showMessageDialog(null, "Completati toate campurile!");
+        }
     }
         
     private void cautareAbonat() {
@@ -470,44 +474,60 @@ public class CarteDeTelefon extends JFrame{
    
     private void stergeAbonat() {
         int rand = tabelPopulat.getSelectedRow();
-        try {
-            String stergeSQL = "DELETE FROM ABONAT "
-                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
-            stmt = conn.createStatement();
-            int n = stmt.executeUpdate(stergeSQL);
-            if(n>0) {
-                stergereInput();
-                actualizareTabel();
-                dezactivareInput();
-                JOptionPane.showMessageDialog(null, "Abonat sters!");
-            }
-        } catch(SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-            
+        if(rand != -1) {
+	        try {
+	            String stergeSQL = "DELETE FROM ABONAT "
+	                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
+	            stmt = conn.createStatement();
+	            int n = stmt.executeUpdate(stergeSQL);
+	            if(n>0) {
+	                stergereInput();
+	                actualizareTabel();
+	                dezactivareInput();
+	                JOptionPane.showMessageDialog(null, "Abonat sters!");
+	            }
+	        } catch(SQLException ex) {
+	                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+	        }
+        } else {
+    		JOptionPane.showMessageDialog(null, "Selectati un abonat din tabel!");
         }
+        
     }
     
     private void actualizeazaAbonat() {
-        try {
-            String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
-                    + " WHERE id=?";
-            int rand = tabelPopulat.getSelectedRow();
-            String id = (String) tabelPopulat.getValueAt(rand, 0);
-            PreparedStatement ps = conn.prepareStatement(adaugaQuery);
-            ps.setString(1, numeText.getText());
-            ps.setString(2, prenumeText.getText());
-            ps.setString(3, cnpText.getText());
-            ps.setString(4, telefonText.getText());
-            ps.setString(5, id);
-            int n = ps.executeUpdate();
-            if(n>0) {
-                stergereInput();
-            	actualizareTabel();
-                JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
-            }
-        } catch(SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-            
+    
+        String nume = numeText.getText();
+        String prenume = prenumeText.getText();
+        String cnp = cnpText.getText();
+        String telefon = telefonText.getText(); 
+        
+        if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
+                && (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
+    	
+	        try {
+	            String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
+	                    + " WHERE id=?";
+	            int rand = tabelPopulat.getSelectedRow();
+	            String id = (String) tabelPopulat.getValueAt(rand, 0);
+	            PreparedStatement ps = conn.prepareStatement(adaugaQuery);
+	            ps.setString(1, numeText.getText());
+	            ps.setString(2, prenumeText.getText());
+	            ps.setString(3, cnpText.getText());
+	            ps.setString(4, telefonText.getText());
+	            ps.setString(5, id);
+	            int n = ps.executeUpdate();
+	            if(n>0) {
+	                stergereInput();
+	            	actualizareTabel();
+	                JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
+	            }
+	        } catch(SQLException ex) {
+	                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+	            
+	        }
+        } else {
+            JOptionPane.showMessageDialog(null, "Cautati sau selectati un abonat!");
         }
     } 
     
