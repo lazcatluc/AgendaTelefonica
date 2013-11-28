@@ -100,7 +100,12 @@ public class CarteDeTelefon extends JFrame {
 		}
 	}
 
-	//Clasa pentru selectarea randului din tabel
+	/*
+	 * Clasa pentru selectarea randului din tabel
+	 * care implementeaza ListSelectionListener pentru
+	 * completarea datelor in campurile de input dupa
+	 * selectarea unui rand 
+	 */
 	class SelectieTabel implements ListSelectionListener {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
@@ -110,7 +115,12 @@ public class CarteDeTelefon extends JFrame {
 		}
 	}
 
-	//Clasa pentru stergerea abonatului la apasarea tastei DELETE
+
+	/*
+	 *Clasa pentru stergerea abonatului la apasarea tastei DELETE
+	 *Dupa apasarea tastei, utilizatorul este intrebat daca
+	 *doreste stergerea 
+	 */
 	class StergereRandAbonat implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
@@ -144,9 +154,11 @@ public class CarteDeTelefon extends JFrame {
 
 	}
 
-	//metoda principala de afisare a tuturor componentelor
-	//Tipul de layout folosit: GridBagLayout
-	//Contine panourile pentru tabel, butoane si casutele de adaugare abonat
+	/*
+	 * Metoda principala de afisare a tuturor componentelor
+	 * Tipul de layout folosit: GridBagLayout
+	 * Contine panourile pentru tabel, butoane si casutele de adaugare abonat
+	 */
 	public void afisare() {
 		actualizareTabel();
 		dezactivareInput(); 
@@ -287,16 +299,18 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 
-	//metoda pentru activarea casutelor de input la selectarea prin click 
+	//Metoda pentru activarea casutelor de input la selectarea prin click 
 	//a unui rand din tabel 
 	void selecteazaRand() {
 		activareInput();
 		try {
 			int rand = tabelPopulat.getSelectedRow();
 
-			//La afisarea tabelului se foloseste randul selectat. Dupa modificarea
-			//datelor, valoarea variabilei "rand" devenea -1 si astfel am folosit
-			//variabila statica randSelectat pentru pastarea valorii randului selectat
+			/*
+			 * La afisarea tabelului se foloseste randul selectat. Dupa modificarea
+			 * datelor, valoarea variabilei "rand" devenea -1 si astfel am folosit
+			 * variabila statica randSelectat pentru pastarea valorii randului selectat
+			 */
 			if(rand==-1) {
 				rand=randSelectat;
 			}
@@ -479,10 +493,12 @@ public class CarteDeTelefon extends JFrame {
 		return panouButoaneTabel;
 	}
 
-	//metoda de adaugare abonat
-	//Se construieste un obiect nou de tip abonat in care se verifica daca tipul de numar de telefon
-	//introdus este mobil sau fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se 
-	//afiseaza o eroare
+	/*
+	 * Metoda de adaugare abonat
+	 * Se construieste un obiect nou de tip abonat in care se verifica daca tipul de numar de telefon
+	 * introdus este mobil sau fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se
+	 * afiseaza o eroare 
+	 */
 	private void adaugareAbonat(){
 
 		NrTel numar = null;
@@ -585,6 +601,12 @@ public class CarteDeTelefon extends JFrame {
 							+ " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
 					stmt = conn.createStatement();
 					int n = stmt.executeUpdate(stergeSQL);
+					
+					/*
+					 * daca n este mai mare ca 0 inseamna ca s-au facut modificari in baza
+					 * si trebuie sa se actualizeze datele afisate in tabel si sa se curete
+					 * campurile de input si sa se dezactiveze
+					 */
 					if(n>0) {
 						stergereInput();
 						actualizareTabel();

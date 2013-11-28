@@ -1,3 +1,9 @@
+/*
+ * Clasa de construire a obiectelor de tip NrTel
+ * Verificare tipul de numar intors si intoarcerea
+ * unui obiect corespunzator de tip NrMobil
+ * sau de tip NrFix
+ */
 package agenda;
 
 public class TipNumarTelefon {
