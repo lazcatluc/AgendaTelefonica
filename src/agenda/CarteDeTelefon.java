@@ -129,11 +129,11 @@ public class CarteDeTelefon extends JFrame {
 				int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat, "Doriti stergerea abonatului?","Confirmati stergerea", JOptionPane.YES_NO_OPTION);
 				int[] index = tabelPopulat.getSelectedRows();
 				e.consume();
+				stergeAbonat();
 				if(valoareMesaj == JOptionPane.YES_OPTION ){
 					for (int i=index.length - 1; i >= 0; --i){
 						model.removeRow(index[i]);
 					}
-					stergeAbonat();
 				} else if(valoareMesaj== JOptionPane.NO_OPTION) {
 					JOptionPane.showMessageDialog(null, "Abonatul nu a fost sters!");
 				}
