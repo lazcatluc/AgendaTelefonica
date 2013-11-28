@@ -34,10 +34,7 @@ CREATE TABLE IF NOT EXISTS `abonat` (
   `prenume` varchar(50) NOT NULL COMMENT 'Prenume ',
   `cnp` varchar(13) NOT NULL COMMENT 'CNP',
   `telefon` varchar(20) NOT NULL COMMENT 'Numar Telefon',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_2` (`id`),
-  KEY `id` (`id`),
-  KEY `id_3` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=43 ;
 
 --
