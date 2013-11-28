@@ -8,6 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 
 import javax.swing.JButton;
@@ -185,10 +187,25 @@ public class CarteDeTelefon extends JFrame{
 		    tabelPopulat.setModel(model);
 		    tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
 		    tabelPopulat.getSelectionModel().addListSelectionListener(new SelectieTabel());
+		    tabelPopulat.addKeyListener(new KeyAdapter() {
+		    	public void keyPressed(KeyEvent e) {
+		    		int c = e.getKeyCode();
+		    		if (c == KeyEvent.VK_DELETE) {
+		    			int[] index = tabelPopulat.getSelectedRows();
+		    			e.consume();
+		    			stergeAbonat();
+		    			for (int i=index.length - 1; i >= 0; --i){
+		    				model.removeRow(index[i]);
+		    			}
+		    		}
+		    	}
+		    }); 
 		} catch(Exception ex) {
-		    ex.printStackTrace();
+    		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
 		}
     }
+
+    
     
     void selecteazaRand() {
 		activareInput();
@@ -465,21 +482,25 @@ public class CarteDeTelefon extends JFrame{
     }
    
     private void stergeAbonat() {
+    	int rand = tabelPopulat.getSelectedRow();
+        if(rand==-1) {
+            JOptionPane.showMessageDialog(null, "Selectati un abonat pentru a fi sters!");
+        } else {
 	        try {
-	            int rand = tabelPopulat.getSelectedRow();
-		            String stergeSQL = "DELETE FROM ABONAT "
-		                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
-		            stmt = conn.createStatement();
-		            int n = stmt.executeUpdate(stergeSQL);
-		            if(n>0) {
-		                stergereInput();
-		                actualizareTabel();
-		                dezactivareInput();
-		                JOptionPane.showMessageDialog(null, "Abonat sters!");
+        		String stergeSQL = "DELETE FROM ABONAT "
+	                    + " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
+	            stmt = conn.createStatement();
+	            int n = stmt.executeUpdate(stergeSQL);
+	            if(n>0) {
+	                stergereInput();
+	                actualizareTabel();
+	                dezactivareInput();
+	                JOptionPane.showMessageDialog(null, "Abonat sters!");
 		            }
 	        } catch(SQLException ex) {
 	                JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
 	        }
+        }
     }
     
     private void actualizeazaAbonat() {
