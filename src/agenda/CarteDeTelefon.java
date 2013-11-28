@@ -437,8 +437,8 @@ public class CarteDeTelefon extends JFrame {
 	//interfata de afisare a butoanelor principale
 	private JPanel interfataButoanePrincipale() {
 		JPanel panouButoanePrincipale = new JPanel(new GridBagLayout());
-		JButton adaugaAbonat = new JButton("Adaugare");
-		JButton salveazaAbonat = new JButton("Salvare");
+		JButton adaugaAbonat = new JButton("Activare");
+		JButton salveazaAbonat = new JButton("Adaugare");
 		JButton stergeAbonat = new JButton("Stergere");
 		JButton actualizeazaAbonat = new JButton("Actualizare");
 		JButton anuleazaInregistrare = new JButton("Anulare");
