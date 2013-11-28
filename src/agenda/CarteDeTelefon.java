@@ -8,8 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.*;
 
 import javax.swing.JButton;
@@ -95,6 +95,44 @@ public class CarteDeTelefon extends JFrame{
                 	selecteazaRand();
                 }
             }
+	}
+	
+	class StergereRandAbonat implements KeyListener {
+		
+		@Override
+    	public void keyPressed(KeyEvent e) {
+    		int c = e.getKeyCode();
+    		if (c == KeyEvent.VK_DELETE) {
+    			int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat, "Doriti stergerea abonatului?");
+    			int[] index = tabelPopulat.getSelectedRows();
+    			e.consume();
+        		if(valoareMesaj == JOptionPane.YES_OPTION ){
+        			stergeAbonat();
+        			for (int i=index.length - 1; i >= 0; --i){
+        				model.removeRow(index[i]);
+        			}
+        		} else if(valoareMesaj== JOptionPane.NO_OPTION || valoareMesaj == JOptionPane.CANCEL_OPTION) {
+            		JOptionPane.showMessageDialog(null, "Abonatul nu a fost sters!");
+
+        		}
+        		
+
+    			
+    		}
+    	}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 
 	public void afisare() {
@@ -187,19 +225,7 @@ public class CarteDeTelefon extends JFrame{
 		    tabelPopulat.setModel(model);
 		    tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
 		    tabelPopulat.getSelectionModel().addListSelectionListener(new SelectieTabel());
-		    tabelPopulat.addKeyListener(new KeyAdapter() {
-		    	public void keyPressed(KeyEvent e) {
-		    		int c = e.getKeyCode();
-		    		if (c == KeyEvent.VK_DELETE) {
-		    			int[] index = tabelPopulat.getSelectedRows();
-		    			e.consume();
-		    			stergeAbonat();
-		    			for (int i=index.length - 1; i >= 0; --i){
-		    				model.removeRow(index[i]);
-		    			}
-		    		}
-		    	}
-		    }); 
+		    tabelPopulat.addKeyListener(new StergereRandAbonat()); 
 		} catch(Exception ex) {
     		JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
 		}
