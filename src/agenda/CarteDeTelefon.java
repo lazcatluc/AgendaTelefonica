@@ -52,15 +52,19 @@ public class CarteDeTelefon extends JFrame {
 	private JTextField telefonText = new JTextField(10);
 	private JTextField cautareText = new JTextField(10);
 
-	//Constructorul clasei in care se deschide conexiunea catre
-	//baza de date si se apeleaza metoda de afisare
+	protected CarteDeTelefon(Connection conn) {
+		this.conn = conn;
+	}
+
+	// Constructorul clasei in care se deschide conexiunea catre
+	// baza de date si se apeleaza metoda de afisare
 	public CarteDeTelefon() {
-		conn = MySQL.getConnection();
+		this(MySQL.getConnection());
 		afisare();
 
 	}
 
-	//Clasele interioare pentru functionalitate
+	// Clasele interioare pentru functionalitate
 	class ActivareInput implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
 			activareInput();
@@ -90,7 +94,7 @@ public class CarteDeTelefon extends JFrame {
 	class AnuleazaInput implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
 			stergereInput();
-			dezactivareInput();        
+			dezactivareInput();
 		}
 	}
 
@@ -101,10 +105,9 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	/*
-	 * Clasa pentru selectarea randului din tabel
-	 * care implementeaza ListSelectionListener pentru
-	 * completarea datelor in campurile de input dupa
-	 * selectarea unui rand 
+	 * Clasa pentru selectarea randului din tabel care implementeaza
+	 * ListSelectionListener pentru completarea datelor in campurile de input
+	 * dupa selectarea unui rand
 	 */
 	class SelectieTabel implements ListSelectionListener {
 		@Override
@@ -115,27 +118,28 @@ public class CarteDeTelefon extends JFrame {
 		}
 	}
 
-
 	/*
-	 *Clasa pentru stergerea abonatului la apasarea tastei DELETE
-	 *Dupa apasarea tastei, utilizatorul este intrebat daca
-	 *doreste stergerea 
+	 * Clasa pentru stergerea abonatului la apasarea tastei DELETEDupa apasarea
+	 * tastei, utilizatorul este intrebat dacadoreste stergerea
 	 */
 	class StergereRandAbonat implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			int c = e.getKeyCode();
 			if (c == KeyEvent.VK_DELETE) {
-				int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat, "Doriti stergerea abonatului?","Confirmati stergerea", JOptionPane.YES_NO_OPTION);
+				int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat,
+						"Doriti stergerea abonatului?", "Confirmati stergerea",
+						JOptionPane.YES_NO_OPTION);
 				int[] index = tabelPopulat.getSelectedRows();
 				e.consume();
 				stergeAbonat();
-				if(valoareMesaj == JOptionPane.YES_OPTION ){
-					for (int i=index.length - 1; i >= 0; --i){
+				if (valoareMesaj == JOptionPane.YES_OPTION) {
+					for (int i = index.length - 1; i >= 0; --i) {
 						model.removeRow(index[i]);
 					}
-				} else if(valoareMesaj== JOptionPane.NO_OPTION) {
-					JOptionPane.showMessageDialog(null, "Abonatul nu a fost sters!");
+				} else if (valoareMesaj == JOptionPane.NO_OPTION) {
+					JOptionPane.showMessageDialog(null,
+							"Abonatul nu a fost sters!");
 				}
 			}
 		}
@@ -155,13 +159,13 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	/*
-	 * Metoda principala de afisare a tuturor componentelor
-	 * Tipul de layout folosit: GridBagLayout
-	 * Contine panourile pentru tabel, butoane si casutele de adaugare abonat
+	 * Metoda principala de afisare a tuturor componentelor Tipul de layout
+	 * folosit: GridBagLayout Contine panourile pentru tabel, butoane si
+	 * casutele de adaugare abonat
 	 */
 	public void afisare() {
 		actualizareTabel();
-		dezactivareInput(); 
+		dezactivareInput();
 		JPanel panouPrincipal = new JPanel(new GridBagLayout());
 		this.getContentPane().add(panouPrincipal);
 
@@ -173,7 +177,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		panouPrincipal.add(eticheta,gbc);
+		panouPrincipal.add(eticheta, gbc);
 
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridx = 0;
@@ -181,7 +185,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
-		panouPrincipal.add(new JScrollPane(tabelPopulat),gbc);
+		panouPrincipal.add(new JScrollPane(tabelPopulat), gbc);
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 0;
@@ -193,7 +197,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridwidth = 2;
-		panouPrincipal.add(interfataButoanePrincipale(),gbc);
+		panouPrincipal.add(interfataButoanePrincipale(), gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -203,10 +207,10 @@ public class CarteDeTelefon extends JFrame {
 		panouPrincipal.add(interfataAdaugare(), gbc);
 
 		this.pack();
-		this.setVisible(true);         
+		this.setVisible(true);
 	}
 
-	//metoda de activare a input-urilor de introducere a datelor
+	// metoda de activare a input-urilor de introducere a datelor
 	private void activareInput() {
 		numeText.setEnabled(true);
 		prenumeText.setEnabled(true);
@@ -214,7 +218,7 @@ public class CarteDeTelefon extends JFrame {
 		telefonText.setEnabled(true);
 	}
 
-	//metoda de dezactivare a input-urilor de introducere a datelor
+	// metoda de dezactivare a input-urilor de introducere a datelor
 	private void dezactivareInput() {
 		numeText.setEnabled(false);
 		prenumeText.setEnabled(false);
@@ -222,7 +226,7 @@ public class CarteDeTelefon extends JFrame {
 		telefonText.setEnabled(false);
 	}
 
-	//metoda de stergere a input-urilor de introducere a datelor
+	// metoda de stergere a input-urilor de introducere a datelor
 	private void stergereInput() {
 		cautareText.setText(null);
 		numeText.setText(null);
@@ -231,57 +235,62 @@ public class CarteDeTelefon extends JFrame {
 		telefonText.setText(null);
 	}
 
-	//metoda pentru actualizarea informatiilor din tabel la schimbarea 
-	//datelor (adaugare/modificare/stergere)
+	// metoda pentru actualizarea informatiilor din tabel la schimbarea
+	// datelor (adaugare/modificare/stergere)
 	void actualizareTabel() {
 		try {
-			String[] coloane = {"Nr.#","Nume","Prenume","CNP","Telefon"};
+			String[] coloane = { "Nr.#", "Nume", "Prenume", "CNP", "Telefon" };
 			String sql = "select * from abonat";
-			model = new DefaultTableModel(null,coloane);
+			model = new DefaultTableModel(null, coloane);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
-			//folosirea TableRowSorter pentru a ordona datele din tabel prin
-			//selectarea unui titlu de coloana
-			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+			// folosirea TableRowSorter pentru a ordona datele din tabel prin
+			// selectarea unui titlu de coloana
+			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(
+					model);
 			tabelPopulat.setRowSorter(sorter);
 
-			//adaugare listener pentru input-ul de cautare pentru
-			//filtrarea datelor din tabel
-			cautareText.getDocument().addDocumentListener(new DocumentListener() {
-				private void searchFieldChangedUpdate(DocumentEvent evt) {
-					String text = cautareText.getText();
-					if (text.length() == 0) {
-						sorter.setRowFilter(null);
-					} else {
-						try {
-							sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-						} catch (PatternSyntaxException pse) {
-							JOptionPane.showMessageDialog(null, "Bad regex pattern", 
-									"Bad regex pattern", JOptionPane.ERROR_MESSAGE);
+			// adaugare listener pentru input-ul de cautare pentru
+			// filtrarea datelor din tabel
+			cautareText.getDocument().addDocumentListener(
+					new DocumentListener() {
+						private void searchFieldChangedUpdate(DocumentEvent evt) {
+							String text = cautareText.getText();
+							if (text.length() == 0) {
+								sorter.setRowFilter(null);
+							} else {
+								try {
+									sorter.setRowFilter(RowFilter
+											.regexFilter("(?i)" + text));
+								} catch (PatternSyntaxException pse) {
+									JOptionPane.showMessageDialog(null,
+											"Bad regex pattern",
+											"Bad regex pattern",
+											JOptionPane.ERROR_MESSAGE);
+								}
+							}
 						}
-					}
-				}
 
-				@Override
-				public void insertUpdate(DocumentEvent evt) {
-					searchFieldChangedUpdate(evt);
-				}
+						@Override
+						public void insertUpdate(DocumentEvent evt) {
+							searchFieldChangedUpdate(evt);
+						}
 
-				@Override
-				public void removeUpdate(DocumentEvent evt) {
-					searchFieldChangedUpdate(evt);
-				}
+						@Override
+						public void removeUpdate(DocumentEvent evt) {
+							searchFieldChangedUpdate(evt);
+						}
 
-				@Override
-				public void changedUpdate(DocumentEvent evt) {
-					searchFieldChangedUpdate(evt);
-				}
-			});
+						@Override
+						public void changedUpdate(DocumentEvent evt) {
+							searchFieldChangedUpdate(evt);
+						}
+					});
 
 			String[] linie = new String[5];
 
-			while(rs.next()) {
+			while (rs.next()) {
 				linie[0] = rs.getString("id");
 				linie[1] = rs.getString("nume");
 				linie[2] = rs.getString("prenume");
@@ -290,48 +299,58 @@ public class CarteDeTelefon extends JFrame {
 				model.addRow(linie);
 			}
 			tabelPopulat.setModel(model);
-			tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-			tabelPopulat.getSelectionModel().addListSelectionListener(new SelectieTabel());
-			tabelPopulat.addKeyListener(new StergereRandAbonat()); 
-		} catch(Exception ex) {
-			JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+			tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tabelPopulat.getSelectionModel().addListSelectionListener(
+					new SelectieTabel());
+			tabelPopulat.addKeyListener(new StergereRandAbonat());
+		} catch (SQLException ex) {
+			// JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+			throw new IllegalStateException(ex);
 		}
 	}
 
-
-	//Metoda pentru activarea casutelor de input la selectarea prin click 
-	//a unui rand din tabel 
+	// Metoda pentru activarea casutelor de input la selectarea prin click
+	// a unui rand din tabel
 	void selecteazaRand() {
 		activareInput();
 		try {
-			int rand = tabelPopulat.getSelectedRow();
-
-			/*
-			 * La afisarea tabelului se foloseste randul selectat. Dupa modificarea
-			 * datelor, valoarea variabilei "rand" devenea -1 si astfel am folosit
-			 * variabila statica randSelectat pentru pastarea valorii randului selectat
-			 */
-			if(rand==-1) {
-				rand=randSelectat;
-			}
-			String sql = "select * from abonat where id=" +tabelPopulat.getValueAt(rand, 0);
+			int rand = getRandSelectat();
+			String sql = "select * from abonat where id="
+					+ tabelPopulat.getValueAt(rand, 0);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
-			rs.next();
-			numeText.setText(rs.getString("nume"));
-			prenumeText.setText(rs.getString("prenume"));
-			cnpText.setText(rs.getString("cnp"));
-			telefonText.setText(rs.getString("telefon"));
+			if (rs.next()) {
+				numeText.setText(rs.getString("nume"));
+				prenumeText.setText(rs.getString("prenume"));
+				cnpText.setText(rs.getString("cnp"));
+				telefonText.setText(rs.getString("telefon"));
+			}
 
-			randSelectat=rand;
-		} catch(Exception ex) {
+			randSelectat = rand;
+		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
 		}
 
 	}
 
-	//interfata din partea dreapta a aplicatie pentru adaugare/modificare abonati
+	private int getRandSelectat() {
+		int rand = tabelPopulat.getSelectedRow();
+
+		/*
+		 * La afisarea tabelului se foloseste randul selectat. Dupa modificarea
+		 * datelor, valoarea variabilei "rand" devenea -1 si astfel am folosit
+		 * variabila statica randSelectat pentru pastarea valorii randului
+		 * selectat
+		 */
+		if (rand == -1) {
+			rand = randSelectat;
+		}
+		return rand;
+	}
+
+	// interfata din partea dreapta a aplicatie pentru adaugare/modificare
+	// abonati
 	private JPanel interfataAdaugare() {
 		JPanel panouInterfataAdaugare = new JPanel();
 		panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
@@ -346,7 +365,7 @@ public class CarteDeTelefon extends JFrame {
 
 		panouInterfataAdaugare.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(2,2,2,2);
+		gbc.insets = new Insets(2, 2, 2, 2);
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 
 		cautareText.setMinimumSize(cautareText.getPreferredSize());
@@ -355,18 +374,17 @@ public class CarteDeTelefon extends JFrame {
 		cnpText.setMinimumSize(cautareText.getPreferredSize());
 		telefonText.setMinimumSize(cautareText.getPreferredSize());
 
-
-		int i=0;
+		int i = 0;
 
 		gbc.gridx = 0;
 		gbc.gridy = i;
-		panouInterfataAdaugare.add(cautareLabel,gbc);
+		panouInterfataAdaugare.add(cautareLabel, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cautareText,gbc);
+		panouInterfataAdaugare.add(cautareText, gbc);
 
 		i++;
 
@@ -374,13 +392,13 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(numeLabel,gbc);
+		panouInterfataAdaugare.add(numeLabel, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(numeText,gbc);		
+		panouInterfataAdaugare.add(numeText, gbc);
 
 		i++;
 
@@ -388,13 +406,13 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(prenumeLabel,gbc);
+		panouInterfataAdaugare.add(prenumeLabel, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(prenumeText,gbc);		
+		panouInterfataAdaugare.add(prenumeText, gbc);
 
 		i++;
 
@@ -402,13 +420,13 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(cnpLabel,gbc);
+		panouInterfataAdaugare.add(cnpLabel, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cnpText,gbc);		
+		panouInterfataAdaugare.add(cnpText, gbc);
 
 		i++;
 
@@ -416,25 +434,25 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(telefonLabel,gbc);
+		panouInterfataAdaugare.add(telefonLabel, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(telefonText,gbc);
+		panouInterfataAdaugare.add(telefonText, gbc);
 
 		i++;
 
 		gbc.gridx = 1;
 		gbc.gridy = i;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cautaAbonat,gbc);
+		panouInterfataAdaugare.add(cautaAbonat, gbc);
 
 		return panouInterfataAdaugare;
 	}
 
-	//interfata de afisare a butoanelor principale
+	// interfata de afisare a butoanelor principale
 	private JPanel interfataButoanePrincipale() {
 		JPanel panouButoanePrincipale = new JPanel(new GridBagLayout());
 		JButton adaugaAbonat = new JButton("Activare");
@@ -443,11 +461,9 @@ public class CarteDeTelefon extends JFrame {
 		JButton actualizeazaAbonat = new JButton("Actualizare");
 		JButton anuleazaInregistrare = new JButton("Anulare");
 
-
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.insets = new Insets(1, 1, 1, 1);
-
 
 		adaugaAbonat.addActionListener(new ActivareInput());
 		salveazaAbonat.addActionListener(new SalveazaAbonat());
@@ -459,30 +475,30 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouButoanePrincipale.add(adaugaAbonat,gbc);
+		panouButoanePrincipale.add(adaugaAbonat, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		panouButoanePrincipale.add(salveazaAbonat,gbc);
+		panouButoanePrincipale.add(salveazaAbonat, gbc);
 
 		gbc.gridx = 2;
 		gbc.gridy = 0;
-		panouButoanePrincipale.add(stergeAbonat,gbc);
+		panouButoanePrincipale.add(stergeAbonat, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panouButoanePrincipale.add(actualizeazaAbonat,gbc);
+		panouButoanePrincipale.add(actualizeazaAbonat, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouButoanePrincipale.add(anuleazaInregistrare,gbc);
+		panouButoanePrincipale.add(anuleazaInregistrare, gbc);
 
 		return panouButoanePrincipale;
 	}
 
-	//interfata de afisare a butoanelor din tabel - fara functionalitate inca
+	// interfata de afisare a butoanelor din tabel - fara functionalitate inca
 	private JPanel interfataButoaneTabel() {
 		JPanel panouButoaneTabel = new JPanel();
 
@@ -494,28 +510,31 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	/*
-	 * Metoda de adaugare abonat
-	 * Se construieste un obiect nou de tip abonat in care se verifica daca tipul de numar de telefon
-	 * introdus este mobil sau fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se
-	 * afiseaza o eroare 
+	 * Metoda de adaugare abonat Se construieste un obiect nou de tip abonat in
+	 * care se verifica daca tipul de numar de telefon introdus este mobil sau
+	 * fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se afiseaza
+	 * o eroare
 	 */
-	private void adaugareAbonat(){
+	private void adaugareAbonat() {
 
 		NrTel numar = null;
 		String nume = numeText.getText();
 		String prenume = prenumeText.getText();
 		String cnp = cnpText.getText();
-		String telefon = telefonText.getText();    
+		String telefon = telefonText.getText();
 
-		if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
-				&& (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
+		if ((nume != null && nume.length() > 0)
+				&& (prenume != null && prenume.length() > 0)
+				&& (cnp != null && cnp.length() > 0)
+				&& (telefon != null && telefon.length() > 0)) {
 
 			try {
 				numar = nrTel.getTipNumarTel(telefon);
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Eroare: " + e.getMessage());
+				JOptionPane
+						.showMessageDialog(null, "Eroare: " + e.getMessage());
 			}
-			Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);  
+			Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);
 
 			try {
 				String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
@@ -527,32 +546,36 @@ public class CarteDeTelefon extends JFrame {
 				ps.setString(4, abonatUnic.getNumarTelefon().toString());
 
 				int n = ps.executeUpdate();
-				if(n>0) {
+				if (n > 0) {
 					actualizareTabel();
 					stergereInput();
-					JOptionPane.showMessageDialog(null, "Date salvate cu succes!");
+					JOptionPane.showMessageDialog(null,
+							"Date salvate cu succes!");
 				}
 
-			} catch(SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null,
+						"Eroare: " + ex.getMessage());
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Completati toate campurile!");
 		}
 	}
 
-	//metoda pentru cautarea abonatului in functie de nume, prenume, cnp sau telefon
+	// metoda pentru cautarea abonatului in functie de nume, prenume, cnp sau
+	// telefon
 	private void cautareAbonat() {
 		try {
 			String textCautat = cautareText.getText().trim();
 
-			if (textCautat!=null & textCautat.length()>0) {
+			if (textCautat != null & textCautat.length() > 0) {
 				String sql = "SELECT nume,prenume,cnp,telefon from abonat "
-						+ "where nume like '%"+textCautat+"%' "
-						+ "or prenume like '%"+textCautat+"%' "
-						+ "or cnp like '%"+textCautat+"%' "
-						+ "or telefon like '%"+textCautat+"%'";
-				String sqlRezultate = "SELECT COUNT(*) as rezultate FROM ( "+sql+" ) as inregistrari";
+						+ "where nume like '%" + textCautat + "%' "
+						+ "or prenume like '%" + textCautat + "%' "
+						+ "or cnp like '%" + textCautat + "%' "
+						+ "or telefon like '%" + textCautat + "%'";
+				String sqlRezultate = "SELECT COUNT(*) as rezultate FROM ( "
+						+ sql + " ) as inregistrari";
 				stmt = conn.createStatement();
 
 				int rezultate = 0;
@@ -562,77 +585,87 @@ public class CarteDeTelefon extends JFrame {
 				rsRezultate.close();
 
 				ResultSet rs = stmt.executeQuery(sql);
-				if(rezultate==1) {
+				if (rezultate == 1) {
 					rs.next();
 					numeText.setText(rs.getString("nume"));
 					prenumeText.setText(rs.getString("prenume"));
 					cnpText.setText(rs.getString("cnp"));
 					telefonText.setText(rs.getString("telefon"));
-				} else if(rezultate>1) {
-					JOptionPane.showMessageDialog(null, "Am gasit : " + rezultate +" rezultate. Cautati dupa telefon sau CNP pentru rezultate unice!");
+				} else if (rezultate > 1) {
+					JOptionPane
+							.showMessageDialog(
+									null,
+									"Am gasit : "
+											+ rezultate
+											+ " rezultate. Cautati dupa telefon sau CNP pentru rezultate unice!");
 					rs.next();
 					numeText.setText(rs.getString("nume"));
 					prenumeText.setText(rs.getString("prenume"));
 					cnpText.setText(rs.getString("cnp"));
 					telefonText.setText(rs.getString("telefon"));
 				} else {
-					JOptionPane.showMessageDialog(null, "Niciun rezultat gasit!");
+					JOptionPane.showMessageDialog(null,
+							"Niciun rezultat gasit!");
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Completati campul de cautare!");
+				JOptionPane.showMessageDialog(null,
+						"Completati campul de cautare!");
 			}
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
+			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
 		}
 
 	}
 
-	//stergerea abonatului din tabel si baza de date
+	// stergerea abonatului din tabel si baza de date
 	private void stergeAbonat() {
-		int rand = tabelPopulat.getSelectedRow();
-		if(rand==-1) {
-			JOptionPane.showMessageDialog(null, "Selectati un abonat pentru a fi sters!");
-		} else {
-			try {
-				int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat, "Doriti stergerea abonatului?","Confirmati stergerea", JOptionPane.YES_NO_OPTION);
-				if(valoareMesaj == JOptionPane.YES_OPTION ){
-					String stergeSQL = "DELETE FROM ABONAT "
-							+ " WHERE id=" + tabelPopulat.getValueAt(rand, 0);
-					stmt = conn.createStatement();
-					int n = stmt.executeUpdate(stergeSQL);
-					
-					/*
-					 * daca n este mai mare ca 0 inseamna ca s-au facut modificari in baza
-					 * si trebuie sa se actualizeze datele afisate in tabel si sa se curete
-					 * campurile de input si sa se dezactiveze
-					 */
-					if(n>0) {
-						stergereInput();
-						actualizareTabel();
-						dezactivareInput();
-						JOptionPane.showMessageDialog(null, "Abonat sters!");
-					}
-				} else if(valoareMesaj== JOptionPane.NO_OPTION) {
-					JOptionPane.showMessageDialog(null, "Abonatul nu a fost sters!");
+		int rand = getRandSelectat();
+		try {
+			int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat,
+					"Doriti stergerea abonatului?", "Confirmati stergerea",
+					JOptionPane.YES_NO_OPTION);
+			if (valoareMesaj == JOptionPane.YES_OPTION) {
+				String stergeSQL = "DELETE FROM ABONAT " + " WHERE id="
+						+ tabelPopulat.getValueAt(rand, 0);
+				stmt = conn.createStatement();
+				int n = stmt.executeUpdate(stergeSQL);
+				randSelectat = 0;
+				
+				/*
+				 * daca n este mai mare ca 0 inseamna ca s-au facut modificari
+				 * in baza si trebuie sa se actualizeze datele afisate in tabel
+				 * si sa se curete campurile de input si sa se dezactiveze
+				 */
+				if (n > 0) {
+					stergereInput();
+					actualizareTabel();
+					dezactivareInput();
+					JOptionPane.showMessageDialog(null, "Abonat sters!");
 				}
-
-			} catch(SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+			} else if (valoareMesaj == JOptionPane.NO_OPTION) {
+				JOptionPane
+						.showMessageDialog(null, "Abonatul nu a fost sters!");
 			}
+
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
 		}
+
 	}
 
-	//modificarea datelor unui abonat dupa selectarea/gasirea in tabel
+	// modificarea datelor unui abonat dupa selectarea/gasirea in tabel
 	private void actualizeazaAbonat() {
 
 		String nume = numeText.getText();
 		String prenume = prenumeText.getText();
 		String cnp = cnpText.getText();
-		String telefon = telefonText.getText(); 
+		String telefon = telefonText.getText();
 
-		if((nume!=null && nume.length() > 0) && (prenume!=null && prenume.length() > 0) 
-				&& (cnp!=null && cnp.length() > 0) && (telefon!=null && telefon.length() > 0)) {
+		if ((nume != null && nume.length() > 0)
+				&& (prenume != null && prenume.length() > 0)
+				&& (cnp != null && cnp.length() > 0)
+				&& (telefon != null && telefon.length() > 0)) {
 
 			try {
 				String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
@@ -646,27 +679,27 @@ public class CarteDeTelefon extends JFrame {
 				ps.setString(4, telefonText.getText());
 				ps.setString(5, id);
 				int n = ps.executeUpdate();
-				if(n>0) {
+				if (n > 0) {
 					stergereInput();
 					actualizareTabel();
-					JOptionPane.showMessageDialog(null, "Date actualizate cu succes!");
+					JOptionPane.showMessageDialog(null,
+							"Date actualizate cu succes!");
 				}
-			} catch(SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null,
+						"Eroare: " + ex.getMessage());
 
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Cautati sau selectati un abonat!");
+			JOptionPane.showMessageDialog(null,
+					"Cautati sau selectati un abonat!");
 		}
-	} 
-
-
-
+	}
 
 	public static void main(String[] args) {
 		CarteDeTelefon agenda = new CarteDeTelefon();
 		agenda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		agenda.setLocationRelativeTo (null);
+		agenda.setLocationRelativeTo(null);
 		agenda.setTitle("Agenda Telefonica");
 		agenda.pack();
 		agenda.setVisible(true);
