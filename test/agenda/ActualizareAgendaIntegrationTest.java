@@ -21,13 +21,13 @@ public class ActualizareAgendaIntegrationTest {
 	
 	@Test
 	public void actualizareTabel() throws Exception {
-		carteDeTelefon.actualizareTabel();
+		carteDeTelefon.getActionListenerFactory().getActivateInput().actualizareTabel();
 	}
 	
 	@Test
 	public void stergereAbonat() throws Exception {
-		carteDeTelefon.actualizareTabel();
-		carteDeTelefon.selecteazaRand();
-		carteDeTelefon.stergeAbonat();
+		carteDeTelefon.getActionListenerFactory().getActivateInput().actualizareTabel();
+		carteDeTelefon.getActionListenerFactory().getSelectieTabel().valueChanged(mock(ListSelectionEvent.class));
+		carteDeTelefon.getActionListenerFactory().getStergeAbonat().stergeAbonat();
 	}
 }

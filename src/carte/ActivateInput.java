@@ -5,7 +5,8 @@ import java.awt.event.ActionListener;
 
 import agenda.CarteDeTelefon;
 
-public class ActivateInput extends AbstractCarteDeTelefonActionListener {
+public class ActivateInput extends AbstractCarteDeTelefonActionListener  implements
+	ActionListener {
 	
 	public ActivateInput(CarteDeTelefon carteDeTelefon) {
 		super(carteDeTelefon);
@@ -13,7 +14,7 @@ public class ActivateInput extends AbstractCarteDeTelefonActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		getCarteDeTelefon().activareInput();
+		activareInput();
 	}
 
 }

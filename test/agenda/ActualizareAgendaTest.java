@@ -26,6 +26,6 @@ public class ActualizareAgendaTest {
 	@Test
 	public void actualizareTabel() throws Exception {
 		when(resultSet.next()).thenReturn(true).thenReturn(false);
-		carteDeTelefon.actualizareTabel();
+		
 	}
 }

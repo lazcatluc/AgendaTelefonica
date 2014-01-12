@@ -40,13 +40,11 @@ public class CarteDeTelefon extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private TipNumarTelefon nrTel = new TipNumarTelefon();
 	private Connection conn;
-	private Statement stmt;
 
 	private DefaultTableModel model;
 	private JTable tabelPopulat = new JTable();
-	private static int randSelectat = 0;
+	private int randSelectat = 0;
 
 	private JTextField numeText = new JTextField(10);
 	private JTextField prenumeText = new JTextField(10);
@@ -57,7 +55,7 @@ public class CarteDeTelefon extends JFrame {
 	private final ActionListenerFactory actionListenerFactory;
 
 	protected CarteDeTelefon(Connection conn) {
-		this.conn = conn;
+		this.setConn(conn);
 		actionListenerFactory = new ActionListenerFactory(this);
 	}
 
@@ -66,7 +64,6 @@ public class CarteDeTelefon extends JFrame {
 	public CarteDeTelefon() {
 		this(MySQL.getConnection());
 		afisare();
-
 	}
 
 	/*
@@ -75,8 +72,8 @@ public class CarteDeTelefon extends JFrame {
 	 * casutele de adaugare abonat
 	 */
 	public void afisare() {
-		actualizareTabel();
-		dezactivareInput();
+		getActionListenerFactory().getAnuleazaInput().actualizareTabel();
+		getActionListenerFactory().getAnuleazaInput().dezactivareInput();
 		JPanel panouPrincipal = new JPanel(new GridBagLayout());
 		this.getContentPane().add(panouPrincipal);
 
@@ -121,131 +118,8 @@ public class CarteDeTelefon extends JFrame {
 		this.setVisible(true);
 	}
 
-	// metoda de activare a input-urilor de introducere a datelor
-	public void activareInput() {
-		numeText.setEnabled(true);
-		prenumeText.setEnabled(true);
-		cnpText.setEnabled(true);
-		telefonText.setEnabled(true);
-	}
 
-	// metoda de dezactivare a input-urilor de introducere a datelor
-	public void dezactivareInput() {
-		numeText.setEnabled(false);
-		prenumeText.setEnabled(false);
-		cnpText.setEnabled(false);
-		telefonText.setEnabled(false);
-	}
-
-	// metoda de stergere a input-urilor de introducere a datelor
-	public void stergereInput() {
-		cautareText.setText(null);
-		numeText.setText(null);
-		prenumeText.setText(null);
-		cnpText.setText(null);
-		telefonText.setText(null);
-	}
-
-	// metoda pentru actualizarea informatiilor din tabel la schimbarea
-	// datelor (adaugare/modificare/stergere)
-	public void actualizareTabel() {
-		try {
-			String[] coloane = { "Nr.#", "Nume", "Prenume", "CNP", "Telefon" };
-			String sql = "select * from abonat";
-			setModel(new DefaultTableModel(null, coloane));
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-
-			// folosirea TableRowSorter pentru a ordona datele din tabel prin
-			// selectarea unui titlu de coloana
-			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(
-					getModel());
-			getTabelPopulat().setRowSorter(sorter);
-
-			// adaugare listener pentru input-ul de cautare pentru
-			// filtrarea datelor din tabel
-			cautareText.getDocument().addDocumentListener(
-					new DocumentListener() {
-						private void searchFieldChangedUpdate(DocumentEvent evt) {
-							String text = cautareText.getText();
-							if (text.length() == 0) {
-								sorter.setRowFilter(null);
-							} else {
-								try {
-									sorter.setRowFilter(RowFilter
-											.regexFilter("(?i)" + text));
-								} catch (PatternSyntaxException pse) {
-									JOptionPane.showMessageDialog(null,
-											"Bad regex pattern",
-											"Bad regex pattern",
-											JOptionPane.ERROR_MESSAGE);
-								}
-							}
-						}
-
-						@Override
-						public void insertUpdate(DocumentEvent evt) {
-							searchFieldChangedUpdate(evt);
-						}
-
-						@Override
-						public void removeUpdate(DocumentEvent evt) {
-							searchFieldChangedUpdate(evt);
-						}
-
-						@Override
-						public void changedUpdate(DocumentEvent evt) {
-							searchFieldChangedUpdate(evt);
-						}
-					});
-
-			String[] linie = new String[5];
-
-			while (rs.next()) {
-				linie[0] = rs.getString("id");
-				linie[1] = rs.getString("nume");
-				linie[2] = rs.getString("prenume");
-				linie[3] = rs.getString("cnp");
-				linie[4] = rs.getString("telefon");
-				getModel().addRow(linie);
-			}
-			getTabelPopulat().setModel(getModel());
-			getTabelPopulat().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			getTabelPopulat().getSelectionModel().addListSelectionListener(
-					actionListenerFactory.getSelectieTabel());
-			getTabelPopulat().addKeyListener(actionListenerFactory.getStergereRandAbonat());
-		} catch (SQLException ex) {
-			// JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
-			throw new IllegalStateException(ex);
-		}
-	}
-
-	// Metoda pentru activarea casutelor de input la selectarea prin click
-	// a unui rand din tabel
-	public void selecteazaRand() {
-		activareInput();
-		try {
-			int rand = getRandSelectat();
-			String sql = "select * from abonat where id="
-					+ getTabelPopulat().getValueAt(rand, 0);
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			if (rs.next()) {
-				numeText.setText(rs.getString("nume"));
-				prenumeText.setText(rs.getString("prenume"));
-				cnpText.setText(rs.getString("cnp"));
-				telefonText.setText(rs.getString("telefon"));
-			}
-
-			randSelectat = rand;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-		}
-
-	}
-
-	private int getRandSelectat() {
+	public int getRandSelectat() {
 		int rand = getTabelPopulat().getSelectedRow();
 
 		/*
@@ -267,7 +141,7 @@ public class CarteDeTelefon extends JFrame {
 		panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
 		JLabel cautareLabel = new JLabel("Cauta ");
 		JButton cautaAbonat = new JButton("Cautare");
-		cautaAbonat.addActionListener(actionListenerFactory.getCautaAbonat());
+		cautaAbonat.addActionListener(getActionListenerFactory().getCautaAbonat());
 
 		JLabel numeLabel = new JLabel("Nume");
 		JLabel prenumeLabel = new JLabel("Prenume");
@@ -279,11 +153,11 @@ public class CarteDeTelefon extends JFrame {
 		gbc.insets = new Insets(2, 2, 2, 2);
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 
-		cautareText.setMinimumSize(cautareText.getPreferredSize());
-		numeText.setMinimumSize(cautareText.getPreferredSize());
-		prenumeText.setMinimumSize(cautareText.getPreferredSize());
-		cnpText.setMinimumSize(cautareText.getPreferredSize());
-		telefonText.setMinimumSize(cautareText.getPreferredSize());
+		getCautareText().setMinimumSize(getCautareText().getPreferredSize());
+		getNumeText().setMinimumSize(getCautareText().getPreferredSize());
+		getPrenumeText().setMinimumSize(getCautareText().getPreferredSize());
+		getCnpText().setMinimumSize(getCautareText().getPreferredSize());
+		getTelefonText().setMinimumSize(getCautareText().getPreferredSize());
 
 		int i = 0;
 
@@ -295,7 +169,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cautareText, gbc);
+		panouInterfataAdaugare.add(getCautareText(), gbc);
 
 		i++;
 
@@ -309,7 +183,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(numeText, gbc);
+		panouInterfataAdaugare.add(getNumeText(), gbc);
 
 		i++;
 
@@ -323,7 +197,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(prenumeText, gbc);
+		panouInterfataAdaugare.add(getPrenumeText(), gbc);
 
 		i++;
 
@@ -337,7 +211,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cnpText, gbc);
+		panouInterfataAdaugare.add(getCnpText(), gbc);
 
 		i++;
 
@@ -351,7 +225,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.gridy = i;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(telefonText, gbc);
+		panouInterfataAdaugare.add(getTelefonText(), gbc);
 
 		i++;
 
@@ -376,11 +250,11 @@ public class CarteDeTelefon extends JFrame {
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.insets = new Insets(1, 1, 1, 1);
 
-		adaugaAbonat.addActionListener(actionListenerFactory.getActivateInput());
-		salveazaAbonat.addActionListener(actionListenerFactory.getSalveazaAbonat());
-		stergeAbonat.addActionListener(actionListenerFactory.getStergeAbonat());
-		actualizeazaAbonat.addActionListener(actionListenerFactory.getActualizeazaAbonat());
-		anuleazaInregistrare.addActionListener(actionListenerFactory.getAnuleazaInput());
+		adaugaAbonat.addActionListener(getActionListenerFactory().getActivateInput());
+		salveazaAbonat.addActionListener(getActionListenerFactory().getSalveazaAbonat());
+		stergeAbonat.addActionListener(getActionListenerFactory().getStergeAbonat());
+		actualizeazaAbonat.addActionListener(getActionListenerFactory().getActualizeazaAbonat());
+		anuleazaInregistrare.addActionListener(getActionListenerFactory().getAnuleazaInput());
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -420,193 +294,6 @@ public class CarteDeTelefon extends JFrame {
 		return panouButoaneTabel;
 	}
 
-	/*
-	 * Metoda de adaugare abonat Se construieste un obiect nou de tip abonat in
-	 * care se verifica daca tipul de numar de telefon introdus este mobil sau
-	 * fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se afiseaza
-	 * o eroare
-	 */
-	public void adaugareAbonat() {
-
-		NrTel numar = null;
-		String nume = numeText.getText();
-		String prenume = prenumeText.getText();
-		String cnp = cnpText.getText();
-		String telefon = telefonText.getText();
-
-		if ((nume != null && nume.length() > 0)
-				&& (prenume != null && prenume.length() > 0)
-				&& (cnp != null && cnp.length() > 0)
-				&& (telefon != null && telefon.length() > 0)) {
-
-			try {
-				numar = nrTel.getTipNumarTel(telefon);
-			} catch (Exception e) {
-				JOptionPane
-						.showMessageDialog(null, "Eroare: " + e.getMessage());
-			}
-			Abonat abonatUnic = new Abonat(nume, prenume, cnp, numar);
-
-			try {
-				String adaugaQuery = "INSERT INTO ABONAT(nume,prenume,cnp,telefon)"
-						+ "VALUES(?,?,?,?)";
-				PreparedStatement ps = conn.prepareStatement(adaugaQuery);
-				ps.setString(1, abonatUnic.getNume());
-				ps.setString(2, abonatUnic.getPrenume());
-				ps.setString(3, abonatUnic.getCnp());
-				ps.setString(4, abonatUnic.getNumarTelefon().toString());
-
-				int n = ps.executeUpdate();
-				if (n > 0) {
-					actualizareTabel();
-					stergereInput();
-					JOptionPane.showMessageDialog(null,
-							"Date salvate cu succes!");
-				}
-
-			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null,
-						"Eroare: " + ex.getMessage());
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "Completati toate campurile!");
-		}
-	}
-
-	// metoda pentru cautarea abonatului in functie de nume, prenume, cnp sau
-	// telefon
-	public void cautareAbonat() {
-		try {
-			String textCautat = cautareText.getText().trim();
-
-			if (textCautat != null & textCautat.length() > 0) {
-				String sql = "SELECT nume,prenume,cnp,telefon from abonat "
-						+ "where nume like '%" + textCautat + "%' "
-						+ "or prenume like '%" + textCautat + "%' "
-						+ "or cnp like '%" + textCautat + "%' "
-						+ "or telefon like '%" + textCautat + "%'";
-				String sqlRezultate = "SELECT COUNT(*) as rezultate FROM ( "
-						+ sql + " ) as inregistrari";
-				stmt = conn.createStatement();
-
-				int rezultate = 0;
-				ResultSet rsRezultate = stmt.executeQuery(sqlRezultate);
-				rsRezultate.next();
-				rezultate = rsRezultate.getInt(1);
-				rsRezultate.close();
-
-				ResultSet rs = stmt.executeQuery(sql);
-				if (rezultate == 1) {
-					rs.next();
-					numeText.setText(rs.getString("nume"));
-					prenumeText.setText(rs.getString("prenume"));
-					cnpText.setText(rs.getString("cnp"));
-					telefonText.setText(rs.getString("telefon"));
-				} else if (rezultate > 1) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									"Am gasit : "
-											+ rezultate
-											+ " rezultate. Cautati dupa telefon sau CNP pentru rezultate unice!");
-					rs.next();
-					numeText.setText(rs.getString("nume"));
-					prenumeText.setText(rs.getString("prenume"));
-					cnpText.setText(rs.getString("cnp"));
-					telefonText.setText(rs.getString("telefon"));
-				} else {
-					JOptionPane.showMessageDialog(null,
-							"Niciun rezultat gasit!");
-				}
-			} else {
-				JOptionPane.showMessageDialog(null,
-						"Completati campul de cautare!");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-		}
-
-	}
-
-	// stergerea abonatului din tabel si baza de date
-	public void stergeAbonat() {
-		int rand = getRandSelectat();
-		try {
-			int valoareMesaj = JOptionPane.showConfirmDialog(getTabelPopulat(),
-					"Doriti stergerea abonatului?", "Confirmati stergerea",
-					JOptionPane.YES_NO_OPTION);
-			if (valoareMesaj == JOptionPane.YES_OPTION) {
-				String stergeSQL = "DELETE FROM ABONAT " + " WHERE id="
-						+ getTabelPopulat().getValueAt(rand, 0);
-				stmt = conn.createStatement();
-				int n = stmt.executeUpdate(stergeSQL);
-				randSelectat = 0;
-				
-				/*
-				 * daca n este mai mare ca 0 inseamna ca s-au facut modificari
-				 * in baza si trebuie sa se actualizeze datele afisate in tabel
-				 * si sa se curete campurile de input si sa se dezactiveze
-				 */
-				if (n > 0) {
-					stergereInput();
-					actualizareTabel();
-					dezactivareInput();
-					JOptionPane.showMessageDialog(null, "Abonat sters!");
-				}
-			} else if (valoareMesaj == JOptionPane.NO_OPTION) {
-				JOptionPane
-						.showMessageDialog(null, "Abonatul nu a fost sters!");
-			}
-
-		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(null, "Eroare: " + ex.getMessage());
-		}
-
-	}
-
-	// modificarea datelor unui abonat dupa selectarea/gasirea in tabel
-	public void actualizeazaAbonat() {
-
-		String nume = numeText.getText();
-		String prenume = prenumeText.getText();
-		String cnp = cnpText.getText();
-		String telefon = telefonText.getText();
-
-		if ((nume != null && nume.length() > 0)
-				&& (prenume != null && prenume.length() > 0)
-				&& (cnp != null && cnp.length() > 0)
-				&& (telefon != null && telefon.length() > 0)) {
-
-			try {
-				String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
-						+ " WHERE id=?";
-				int rand = getTabelPopulat().getSelectedRow();
-				String id = (String) getTabelPopulat().getValueAt(rand, 0);
-				PreparedStatement ps = conn.prepareStatement(adaugaQuery);
-				ps.setString(1, numeText.getText());
-				ps.setString(2, prenumeText.getText());
-				ps.setString(3, cnpText.getText());
-				ps.setString(4, telefonText.getText());
-				ps.setString(5, id);
-				int n = ps.executeUpdate();
-				if (n > 0) {
-					stergereInput();
-					actualizareTabel();
-					JOptionPane.showMessageDialog(null,
-							"Date actualizate cu succes!");
-				}
-			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null,
-						"Eroare: " + ex.getMessage());
-
-			}
-		} else {
-			JOptionPane.showMessageDialog(null,
-					"Cautati sau selectati un abonat!");
-		}
-	}
-
 	public static void main(String[] args) {
 		CarteDeTelefon agenda = new CarteDeTelefon();
 		agenda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -642,6 +329,104 @@ public class CarteDeTelefon extends JFrame {
 	 */
 	public void setModel(DefaultTableModel model) {
 		this.model = model;
+	}
+
+	/**
+	 * @return the numeText
+	 */
+	public JTextField getNumeText() {
+		return numeText;
+	}
+
+	/**
+	 * @param numeText the numeText to set
+	 */
+	public void setNumeText(JTextField numeText) {
+		this.numeText = numeText;
+	}
+
+	/**
+	 * @return the prenumeText
+	 */
+	public JTextField getPrenumeText() {
+		return prenumeText;
+	}
+
+	/**
+	 * @param prenumeText the prenumeText to set
+	 */
+	public void setPrenumeText(JTextField prenumeText) {
+		this.prenumeText = prenumeText;
+	}
+
+	/**
+	 * @return the cnpText
+	 */
+	public JTextField getCnpText() {
+		return cnpText;
+	}
+
+	/**
+	 * @param cnpText the cnpText to set
+	 */
+	public void setCnpText(JTextField cnpText) {
+		this.cnpText = cnpText;
+	}
+
+	/**
+	 * @return the telefonText
+	 */
+	public JTextField getTelefonText() {
+		return telefonText;
+	}
+
+	/**
+	 * @param telefonText the telefonText to set
+	 */
+	public void setTelefonText(JTextField telefonText) {
+		this.telefonText = telefonText;
+	}
+
+	/**
+	 * @return the cautareText
+	 */
+	public JTextField getCautareText() {
+		return cautareText;
+	}
+
+	/**
+	 * @param cautareText the cautareText to set
+	 */
+	public void setCautareText(JTextField cautareText) {
+		this.cautareText = cautareText;
+	}
+
+	/**
+	 * @return the conn
+	 */
+	public Connection getConn() {
+		return conn;
+	}
+
+	/**
+	 * @param conn the conn to set
+	 */
+	public void setConn(Connection conn) {
+		this.conn = conn;
+	}
+
+	/**
+	 * @param randSelectat the randSelectat to set
+	 */
+	public void setRandSelectat(int randSelectat) {
+		this.randSelectat = randSelectat;
+	}
+
+	/**
+	 * @return the actionListenerFactory
+	 */
+	public ActionListenerFactory getActionListenerFactory() {
+		return actionListenerFactory;
 	}
 
 }

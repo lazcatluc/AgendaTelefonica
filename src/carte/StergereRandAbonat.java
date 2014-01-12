@@ -11,12 +11,11 @@ import agenda.CarteDeTelefon;
  * Clasa pentru stergerea abonatului la apasarea tastei DELETEDupa apasarea
  * tastei, utilizatorul este intrebat dacadoreste stergerea
  */
-public class StergereRandAbonat implements KeyListener {
+public class StergereRandAbonat extends AbstractCarteDeTelefonActionListener
+	implements KeyListener {
 	
-	private final CarteDeTelefon carteDeTelefon;
-
 	public StergereRandAbonat(CarteDeTelefon carteDeTelefon) {
-		this.carteDeTelefon = carteDeTelefon;
+		super(carteDeTelefon);
 	}
 
 	@Override
@@ -29,15 +28,15 @@ public class StergereRandAbonat implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		int c = e.getKeyCode();
 		if (c == KeyEvent.VK_DELETE) {
-			int valoareMesaj = JOptionPane.showConfirmDialog(carteDeTelefon.getTabelPopulat(),
+			int valoareMesaj = JOptionPane.showConfirmDialog(getCarteDeTelefon().getTabelPopulat(),
 					"Doriti stergerea abonatului?", "Confirmati stergerea",
 					JOptionPane.YES_NO_OPTION);
-			int[] index = carteDeTelefon.getTabelPopulat().getSelectedRows();
+			int[] index = getCarteDeTelefon().getTabelPopulat().getSelectedRows();
 			e.consume();
-			carteDeTelefon.stergeAbonat();
+			new StergeAbonat(getCarteDeTelefon()).stergeAbonat();
 			if (valoareMesaj == JOptionPane.YES_OPTION) {
 				for (int i = index.length - 1; i >= 0; --i) {
-					carteDeTelefon.getModel().removeRow(index[i]);
+					getCarteDeTelefon().getModel().removeRow(index[i]);
 				}
 			} else if (valoareMesaj == JOptionPane.NO_OPTION) {
 				JOptionPane.showMessageDialog(null,
