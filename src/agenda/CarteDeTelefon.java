@@ -4,6 +4,7 @@
 package agenda;
 
 import database.MySQL;
+import gui.GridBuilder;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -149,9 +150,6 @@ public class CarteDeTelefon extends JFrame {
 		JLabel telefonLabel = new JLabel("Telefon");
 
 		panouInterfataAdaugare.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(2, 2, 2, 2);
-		gbc.anchor = GridBagConstraints.NORTHEAST;
 
 		getCautareText().setMinimumSize(getCautareText().getPreferredSize());
 		getNumeText().setMinimumSize(getCautareText().getPreferredSize());
@@ -159,80 +157,18 @@ public class CarteDeTelefon extends JFrame {
 		getCnpText().setMinimumSize(getCautareText().getPreferredSize());
 		getTelefonText().setMinimumSize(getCautareText().getPreferredSize());
 
-		int i = 0;
-
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		panouInterfataAdaugare.add(cautareLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(getCautareText(), gbc);
-
-		i++;
-
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(numeLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(getNumeText(), gbc);
-
-		i++;
-
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(prenumeLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(getPrenumeText(), gbc);
-
-		i++;
-
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(cnpLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(getCnpText(), gbc);
-
-		i++;
-
-		gbc.gridx = 0;
-		gbc.gridy = i;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.NONE;
-		panouInterfataAdaugare.add(telefonLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(getTelefonText(), gbc);
-
-		i++;
-
-		gbc.gridx = 1;
-		gbc.gridy = i;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panouInterfataAdaugare.add(cautaAbonat, gbc);
+		new GridBuilder().withColumns(2).withContainer(panouInterfataAdaugare)
+			.withObject(cautareLabel)
+			.withHorizontal(getCautareText())
+			.withNone(numeLabel)
+			.withHorizontal(getNumeText())
+			.withNone(prenumeLabel)
+			.withHorizontal(getPrenumeText(), 2)
+			.withNone(cnpLabel, 1)
+			.withHorizontal(getCnpText(), 2)
+			.withNone(telefonLabel, 1)
+			.withHorizontal(getTelefonText(), 2)
+			.withHorizontal(cautaAbonat);
 
 		return panouInterfataAdaugare;
 	}

@@ -41,8 +41,8 @@ public class ActualizeazaAbonat extends AbstractCarteDeTelefonActionListener
 				ps.setString(5, id);
 				int n = ps.executeUpdate();
 				if (n > 0) {
-					stergereInput();
 					actualizareTabel();
+					stergereInput();
 					JOptionPane.showMessageDialog(null,
 							"Date actualizate cu succes!");
 				}
