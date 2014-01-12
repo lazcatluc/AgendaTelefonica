@@ -27,7 +27,7 @@ public class ActualizareAgendaIntegrationTest {
 	@Test
 	public void stergereAbonat() throws Exception {
 		carteDeTelefon.actualizareTabel();
-		carteDeTelefon.new SelectieTabel().valueChanged(mock(ListSelectionEvent.class));
-		carteDeTelefon.new StergeAbonat().actionPerformed(mock(ActionEvent.class));
+		carteDeTelefon.selecteazaRand();
+		carteDeTelefon.stergeAbonat();
 	}
 }

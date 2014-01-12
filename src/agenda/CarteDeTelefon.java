@@ -34,6 +34,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import carte.ActionListenerFactory;
+
 public class CarteDeTelefon extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -51,9 +53,12 @@ public class CarteDeTelefon extends JFrame {
 	private JTextField cnpText = new JTextField(10);
 	private JTextField telefonText = new JTextField(10);
 	private JTextField cautareText = new JTextField(10);
+	
+	private final ActionListenerFactory actionListenerFactory;
 
 	protected CarteDeTelefon(Connection conn) {
 		this.conn = conn;
+		actionListenerFactory = new ActionListenerFactory(this);
 	}
 
 	// Constructorul clasei in care se deschide conexiunea catre
@@ -61,100 +66,6 @@ public class CarteDeTelefon extends JFrame {
 	public CarteDeTelefon() {
 		this(MySQL.getConnection());
 		afisare();
-
-	}
-
-	// Clasele interioare pentru functionalitate
-	class ActivareInput implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			activareInput();
-		}
-	}
-
-	class SalveazaAbonat implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			adaugareAbonat();
-			stergereInput();
-			actualizareTabel();
-		}
-	}
-
-	class StergeAbonat implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			stergeAbonat();
-		}
-	}
-
-	class ActualizeazaAbonat implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			actualizeazaAbonat();
-		}
-	}
-
-	class AnuleazaInput implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			stergereInput();
-			dezactivareInput();
-		}
-	}
-
-	class CautaAbonat implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			cautareAbonat();
-		}
-	}
-
-	/*
-	 * Clasa pentru selectarea randului din tabel care implementeaza
-	 * ListSelectionListener pentru completarea datelor in campurile de input
-	 * dupa selectarea unui rand
-	 */
-	class SelectieTabel implements ListSelectionListener {
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			if (!e.getValueIsAdjusting()) {
-				selecteazaRand();
-			}
-		}
-	}
-
-	/*
-	 * Clasa pentru stergerea abonatului la apasarea tastei DELETEDupa apasarea
-	 * tastei, utilizatorul este intrebat dacadoreste stergerea
-	 */
-	class StergereRandAbonat implements KeyListener {
-		@Override
-		public void keyPressed(KeyEvent e) {
-			int c = e.getKeyCode();
-			if (c == KeyEvent.VK_DELETE) {
-				int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat,
-						"Doriti stergerea abonatului?", "Confirmati stergerea",
-						JOptionPane.YES_NO_OPTION);
-				int[] index = tabelPopulat.getSelectedRows();
-				e.consume();
-				stergeAbonat();
-				if (valoareMesaj == JOptionPane.YES_OPTION) {
-					for (int i = index.length - 1; i >= 0; --i) {
-						model.removeRow(index[i]);
-					}
-				} else if (valoareMesaj == JOptionPane.NO_OPTION) {
-					JOptionPane.showMessageDialog(null,
-							"Abonatul nu a fost sters!");
-				}
-			}
-		}
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-
-		}
 
 	}
 
@@ -185,7 +96,7 @@ public class CarteDeTelefon extends JFrame {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
-		panouPrincipal.add(new JScrollPane(tabelPopulat), gbc);
+		panouPrincipal.add(new JScrollPane(getTabelPopulat()), gbc);
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 0;
@@ -211,7 +122,7 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	// metoda de activare a input-urilor de introducere a datelor
-	private void activareInput() {
+	public void activareInput() {
 		numeText.setEnabled(true);
 		prenumeText.setEnabled(true);
 		cnpText.setEnabled(true);
@@ -219,7 +130,7 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	// metoda de dezactivare a input-urilor de introducere a datelor
-	private void dezactivareInput() {
+	public void dezactivareInput() {
 		numeText.setEnabled(false);
 		prenumeText.setEnabled(false);
 		cnpText.setEnabled(false);
@@ -227,7 +138,7 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	// metoda de stergere a input-urilor de introducere a datelor
-	private void stergereInput() {
+	public void stergereInput() {
 		cautareText.setText(null);
 		numeText.setText(null);
 		prenumeText.setText(null);
@@ -237,19 +148,19 @@ public class CarteDeTelefon extends JFrame {
 
 	// metoda pentru actualizarea informatiilor din tabel la schimbarea
 	// datelor (adaugare/modificare/stergere)
-	void actualizareTabel() {
+	public void actualizareTabel() {
 		try {
 			String[] coloane = { "Nr.#", "Nume", "Prenume", "CNP", "Telefon" };
 			String sql = "select * from abonat";
-			model = new DefaultTableModel(null, coloane);
+			setModel(new DefaultTableModel(null, coloane));
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// folosirea TableRowSorter pentru a ordona datele din tabel prin
 			// selectarea unui titlu de coloana
 			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(
-					model);
-			tabelPopulat.setRowSorter(sorter);
+					getModel());
+			getTabelPopulat().setRowSorter(sorter);
 
 			// adaugare listener pentru input-ul de cautare pentru
 			// filtrarea datelor din tabel
@@ -296,13 +207,13 @@ public class CarteDeTelefon extends JFrame {
 				linie[2] = rs.getString("prenume");
 				linie[3] = rs.getString("cnp");
 				linie[4] = rs.getString("telefon");
-				model.addRow(linie);
+				getModel().addRow(linie);
 			}
-			tabelPopulat.setModel(model);
-			tabelPopulat.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tabelPopulat.getSelectionModel().addListSelectionListener(
-					new SelectieTabel());
-			tabelPopulat.addKeyListener(new StergereRandAbonat());
+			getTabelPopulat().setModel(getModel());
+			getTabelPopulat().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			getTabelPopulat().getSelectionModel().addListSelectionListener(
+					actionListenerFactory.getSelectieTabel());
+			getTabelPopulat().addKeyListener(actionListenerFactory.getStergereRandAbonat());
 		} catch (SQLException ex) {
 			// JOptionPane.showMessageDialog(null, "Eroare: "+ex.getMessage());
 			throw new IllegalStateException(ex);
@@ -311,12 +222,12 @@ public class CarteDeTelefon extends JFrame {
 
 	// Metoda pentru activarea casutelor de input la selectarea prin click
 	// a unui rand din tabel
-	void selecteazaRand() {
+	public void selecteazaRand() {
 		activareInput();
 		try {
 			int rand = getRandSelectat();
 			String sql = "select * from abonat where id="
-					+ tabelPopulat.getValueAt(rand, 0);
+					+ getTabelPopulat().getValueAt(rand, 0);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
@@ -335,7 +246,7 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	private int getRandSelectat() {
-		int rand = tabelPopulat.getSelectedRow();
+		int rand = getTabelPopulat().getSelectedRow();
 
 		/*
 		 * La afisarea tabelului se foloseste randul selectat. Dupa modificarea
@@ -356,7 +267,7 @@ public class CarteDeTelefon extends JFrame {
 		panouInterfataAdaugare.setMinimumSize(new Dimension(200, 200));
 		JLabel cautareLabel = new JLabel("Cauta ");
 		JButton cautaAbonat = new JButton("Cautare");
-		cautaAbonat.addActionListener(new CautaAbonat());
+		cautaAbonat.addActionListener(actionListenerFactory.getCautaAbonat());
 
 		JLabel numeLabel = new JLabel("Nume");
 		JLabel prenumeLabel = new JLabel("Prenume");
@@ -465,11 +376,11 @@ public class CarteDeTelefon extends JFrame {
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.insets = new Insets(1, 1, 1, 1);
 
-		adaugaAbonat.addActionListener(new ActivareInput());
-		salveazaAbonat.addActionListener(new SalveazaAbonat());
-		stergeAbonat.addActionListener(new StergeAbonat());
-		actualizeazaAbonat.addActionListener(new ActualizeazaAbonat());
-		anuleazaInregistrare.addActionListener(new AnuleazaInput());
+		adaugaAbonat.addActionListener(actionListenerFactory.getActivateInput());
+		salveazaAbonat.addActionListener(actionListenerFactory.getSalveazaAbonat());
+		stergeAbonat.addActionListener(actionListenerFactory.getStergeAbonat());
+		actualizeazaAbonat.addActionListener(actionListenerFactory.getActualizeazaAbonat());
+		anuleazaInregistrare.addActionListener(actionListenerFactory.getAnuleazaInput());
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -515,7 +426,7 @@ public class CarteDeTelefon extends JFrame {
 	 * fix si daca nu incepe cu '07' sau '02' si nu are 10 caractere se afiseaza
 	 * o eroare
 	 */
-	private void adaugareAbonat() {
+	public void adaugareAbonat() {
 
 		NrTel numar = null;
 		String nume = numeText.getText();
@@ -564,7 +475,7 @@ public class CarteDeTelefon extends JFrame {
 
 	// metoda pentru cautarea abonatului in functie de nume, prenume, cnp sau
 	// telefon
-	private void cautareAbonat() {
+	public void cautareAbonat() {
 		try {
 			String textCautat = cautareText.getText().trim();
 
@@ -619,15 +530,15 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	// stergerea abonatului din tabel si baza de date
-	private void stergeAbonat() {
+	public void stergeAbonat() {
 		int rand = getRandSelectat();
 		try {
-			int valoareMesaj = JOptionPane.showConfirmDialog(tabelPopulat,
+			int valoareMesaj = JOptionPane.showConfirmDialog(getTabelPopulat(),
 					"Doriti stergerea abonatului?", "Confirmati stergerea",
 					JOptionPane.YES_NO_OPTION);
 			if (valoareMesaj == JOptionPane.YES_OPTION) {
 				String stergeSQL = "DELETE FROM ABONAT " + " WHERE id="
-						+ tabelPopulat.getValueAt(rand, 0);
+						+ getTabelPopulat().getValueAt(rand, 0);
 				stmt = conn.createStatement();
 				int n = stmt.executeUpdate(stergeSQL);
 				randSelectat = 0;
@@ -655,7 +566,7 @@ public class CarteDeTelefon extends JFrame {
 	}
 
 	// modificarea datelor unui abonat dupa selectarea/gasirea in tabel
-	private void actualizeazaAbonat() {
+	public void actualizeazaAbonat() {
 
 		String nume = numeText.getText();
 		String prenume = prenumeText.getText();
@@ -670,8 +581,8 @@ public class CarteDeTelefon extends JFrame {
 			try {
 				String adaugaQuery = "UPDATE ABONAT SET nume=?, prenume=?, cnp=? ,telefon=?"
 						+ " WHERE id=?";
-				int rand = tabelPopulat.getSelectedRow();
-				String id = (String) tabelPopulat.getValueAt(rand, 0);
+				int rand = getTabelPopulat().getSelectedRow();
+				String id = (String) getTabelPopulat().getValueAt(rand, 0);
 				PreparedStatement ps = conn.prepareStatement(adaugaQuery);
 				ps.setString(1, numeText.getText());
 				ps.setString(2, prenumeText.getText());
@@ -703,6 +614,34 @@ public class CarteDeTelefon extends JFrame {
 		agenda.setTitle("Agenda Telefonica");
 		agenda.pack();
 		agenda.setVisible(true);
+	}
+
+	/**
+	 * @return the tabelPopulat
+	 */
+	public JTable getTabelPopulat() {
+		return tabelPopulat;
+	}
+
+	/**
+	 * @param tabelPopulat the tabelPopulat to set
+	 */
+	public void setTabelPopulat(JTable tabelPopulat) {
+		this.tabelPopulat = tabelPopulat;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public DefaultTableModel getModel() {
+		return model;
+	}
+
+	/**
+	 * @param model the model to set
+	 */
+	public void setModel(DefaultTableModel model) {
+		this.model = model;
 	}
 
 }
